@@ -1,6 +1,246 @@
-/******* Change Box Model ***************/
-*,
-*:before,
-*:after {
-  box-sizing: border-box;
+/* 
+  ===============================
+  Author: Blessing Mpofu
+  Project: CSE Motors Home View
+  Description: Main CSS file with mobile-first design, custom variables,
+               responsive layout, accessibility-friendly styling, and a hamburger menu.
+  ===============================
+*/
+
+/* ---------- Root Variables for Theming and Reusability ---------- */
+:root {
+  --primary-color: #0d6efd;
+  --primary-hover: #0a58ca;
+  --background-color: #ffffff;
+  --text-color: #212529;
+  --heading-color: #111;
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --border-radius: 10px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------- Base Styles (Mobile First) ---------- */
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
+main {
+  padding: 1rem;
+}
+
+/* ---------- Hero Section ---------- */
+.hero {
+  background-color: #f2f2f2;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  text-align: center;
+  padding: 1rem;
+  margin-bottom: 2rem;
+}
+
+.hero-img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+}
+
+.hero-text {
+  margin-top: 1rem;
+}
+
+.hero-text h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--heading-color);
+  margin-bottom: 0.5rem;
+}
+
+.hero-text p {
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+}
+
+/* Primary Call-to-Action Button */
+.btn-primary {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: var(--primary-hover);
+}
+
+/* ---------- Featured Vehicles Section ---------- */
+.featured {
+  text-align: center;
+  padding: 1rem;
+}
+
+.featured h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: var(--heading-color);
+}
+
+.vehicle-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.vehicle {
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s ease;
+}
+
+.vehicle:hover {
+  transform: translateY(-5px);
+}
+
+.vehicle img {
+  width: 100%;
+  border-radius: var(--border-radius);
+  margin-bottom: 0.75rem;
+}
+
+.vehicle p {
+  font-weight: 500;
+  font-size: 1.05rem;
+  color: var(--text-color);
+}
+
+/* ---------- Header Section ---------- */
+#main-nav {
+  background-color: #000;
+  color: #fff;
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow);
+}
+
+.nav-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.sitename a {
+  color: #fff;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#tools {
+  display: flex;
+  align-items: center;
+}
+
+#tools a {
+  color: #fff;
+  font-size: 1rem;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, color 0.3s;
+  margin-left: 0.5rem;
+}
+
+#tools a:hover,
+#tools a:focus {
+  background-color: #fff;
+  color: #000;
+}
+
+/* ---------- Navigation Section with Hamburger ---------- */
+#nav-toggle {
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: #fff;
+  cursor: pointer;
+  display: block;
+}
+
+/* Hide nav menu initially on mobile */
+#nav-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+/* Make nav menu visible when toggled */
+#main-nav.open #nav-menu {
+  display: flex;
+}
+
+/* Individual nav links */
+#nav-menu li a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  display: block;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+#nav-menu li a:hover,
+#nav-menu li a:focus {
+  background-color: var(--primary-hover);
+}
+
+/* ---------- Responsive Styles for Medium+ Screens ---------- */
+@media screen and (min-width: 768px) {
+  .hero-text h1 {
+    font-size: 2.8rem;
+  }
+
+  .hero-text p {
+    font-size: 1.25rem;
+  }
+
+  .vehicle-grid {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .vehicle {
+    flex: 1;
+    max-width: 280px;
+  }
+
+  #nav-toggle {
+    display: none; /* Hide hamburger on larger screens */
+  }
+
+  #nav-menu {
+    display: flex !important; /* Ensure it shows on larger screens */
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0;
+  }
 }
