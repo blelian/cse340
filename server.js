@@ -1,46 +1,40 @@
-/* ******************************************
- * This server.js file is the primary file of the 
- * application. It is used to control the project.
- *******************************************/
-/* ***********************
- * Require Statements
- *************************/
-const express = require("express");
-const expressLayouts = require("express-ejs-layouts");
-require("dotenv").config();
-
+const express = require('express');
 const app = express();
+const path = require('path');
 
-const staticRoutes = require("./routes/static");
+const baseController = require('./controllers/baseController');
+const inventoryRoute = require('./routes/inventoryRoute');
+const errorRoute = require('./routes/errorRoute');
+const errorHandler = require('./middleware/errorHandler');
+const homeRoute = require('./routes/home');
 
+// Middleware
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 
+// View engine setup
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-/* ***********************
- * Routes
- *************************/
-app.set("view engine", "ejs");
-app.use(expressLayouts);
-app.set("layout", "./layouts/layout")//not at views root
+// Routes
+app.use('/', homeRoute);                // Home and related pages
+app.use('/inventory', inventoryRoute); // Inventory routes
+app.use('/error', errorRoute);          // Route to test error handling (remove after testing)
 
-/* ***********************
- * Routes
- *************************/
-app.use(staticRoutes);
-//Index Route
-app.get("/", function(req, res){
-  res.render("index", {title: "Home"})
-})
+// 404 handler - must be after all routes
+app.use((req, res) => {
+  res.status(404).render('errors/404', {
+    title: '404 Not Found',
+    message: 'Sorry, the page you requested does not exist.',
+  });
+});
 
-/* ***********************
- * Local Server Information
- * Values from .env (environment) file
- *************************/
-const port = process.env.PORT
-const host = process.env.HOST
+// Global error handler - must be last middleware
+app.use(errorHandler);
 
-/* ***********************
- * Log statement to confirm server operation
- *************************/
-app.listen(port, () => {
-  console.log(`app listening on ${host}:${port}`)
-})
+// Start server
+const PORT = process.env.PORT || 5500;  // Make sure to run on port 5500
+app.listen(PORT, () => {
+  console.log(`App is running on http://localhost:${PORT}`);
+});

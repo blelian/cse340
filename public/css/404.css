@@ -1,0 +1,61 @@
+/* public/css/errors.css */
+
+:root {
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --background-color: #f8f9fa;
+  --text-color: #333;
+  --container-bg: #ffffff;
+  --container-shadow: rgba(0, 0, 0, 0.1);
+  --error-color: #dc3545; /* Bootstrap danger red */
+  --link-color: #0d6efd;
+  --link-hover-color: #0a58ca;
+  --border-radius: 12px;
+  --spacing: 1rem;
+  --font-size-large: 3rem;
+  --font-size-medium: 1.25rem;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: var(--spacing);
+  text-align: center;
+}
+
+.container {
+  max-width: 500px;
+  background: var(--container-bg);
+  padding: calc(var(--spacing) * 2);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 15px var(--container-shadow);
+}
+
+h1 {
+  font-size: var(--font-size-large);
+  margin-bottom: 0.5rem;
+  color: var(--error-color);
+}
+
+p {
+  font-size: var(--font-size-medium);
+  margin-bottom: calc(var(--spacing) * 1.5);
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+
+a:hover,
+a:focus {
+  border-color: var(--link-hover-color);
+}

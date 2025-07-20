@@ -1,5 +1,11 @@
 <% const d = new Date() 
-    let year=d.getFullYear()%>
+   let year = d.getFullYear() %>
 <footer>
-    <p class="copyright">&copy; <%= year %>, CSE340 App</p>
+  <p class="copyright">&copy; <%= year %>, CSE340 App</p>
+  <p>
+    <a href="/error/trigger-error" class="error-link" 
+       aria-label="Trigger server error for testing">
+       Trigger 500 Error
+    </a>
+  </p>
 </footer>
