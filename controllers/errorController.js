@@ -1,6 +1,5 @@
-function triggerError(req, res, next) {
-  // Intentionally throw an error to test middleware
-  throw new Error('This is an intentional 500 error triggered by the user.');
+function triggerError(req, res) {
+  throw new Error('This is an intentional error for testing');
 }
 
 module.exports = { triggerError };
