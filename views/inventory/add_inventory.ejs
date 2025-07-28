@@ -2,7 +2,8 @@
 
 <body>
   <main>
-    <h1>Add New Inventory Item</h1>
+    <h1>Add New Vehicle</h1>
+
     <form action="/inventory/add-inventory" method="post">
       <label for="make">Make</label>
       <input type="text" id="make" name="inv_make" value="<%= inv_make %>" required>
@@ -33,7 +34,13 @@
 
       <label for="classification_id">Classification</label>
       <select id="classification_id" name="classification_id" required>
-        <%- classificationSelect %>
+        <option value="">Choose a classification</option>
+        <% classifications.forEach(c => { %>
+          <option value="<%= c.classification_id %>"
+            <%= c.classification_id == classification_id ? 'selected' : '' %>>
+            <%= c.classification_name %>
+          </option>
+        <% }) %>
       </select>
 
       <button type="submit">Add Vehicle</button>

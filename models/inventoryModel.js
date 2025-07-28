@@ -2,10 +2,17 @@ const pool = require('../database');
 
 async function getVehicleById(invId) {
   const result = await pool.query(
-    'SELECT * FROM public.inventory WHERE inv_id = $1',
+    'SELECT * FROM inventory WHERE inv_id = $1',
     [invId]
   );
   return result.rows[0];
+}
+
+async function getAllClassifications() {
+  const result = await pool.query(
+    'SELECT classification_id, classification_name FROM classification ORDER BY classification_name'
+  );
+  return result.rows;
 }
 
 async function addClassification(classification_name) {
@@ -15,12 +22,6 @@ async function addClassification(classification_name) {
     RETURNING *;
   `;
   const result = await pool.query(sql, [classification_name]);
-  return result.rows[0];
-}
-
-async function getClassificationByName(name) {
-  const sql = 'SELECT * FROM classification WHERE classification_name = $1';
-  const result = await pool.query(sql, [name]);
   return result.rows[0];
 }
 
@@ -44,7 +45,7 @@ async function addInventory(data) {
     data.inv_price,
     data.inv_miles,
     data.inv_color,
-    data.classification_id
+    data.classification_id,
   ];
   const result = await pool.query(sql, values);
   return result.rows[0];
@@ -52,7 +53,7 @@ async function addInventory(data) {
 
 module.exports = {
   getVehicleById,
+  getAllClassifications,
   addClassification,
   addInventory,
-  getClassificationByName
 };

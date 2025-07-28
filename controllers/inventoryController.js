@@ -7,7 +7,7 @@ async function buildById(req, res, next) {
     const data = await invModel.getVehicleById(invId);
     const nav = await utils.getNav();
     res.render('inventory/detail', {
-      title: data.inv_make + " " + data.inv_model,
+      title: `${data.inv_make} ${data.inv_model}`,
       nav,
       vehicle: data,
     });
@@ -16,40 +16,53 @@ async function buildById(req, res, next) {
   }
 }
 
-async function buildManagement(req, res) {
-  const nav = await utils.getNav();
-  res.render('inventory/management', {
-    title: "Inventory Management",
-    nav,
-  });
+async function buildManagement(req, res, next) {
+  try {
+    const nav = await utils.getNav();
+    res.render('inventory/management', {
+      title: 'Inventory Management',
+      nav,
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
-async function buildAddClassification(req, res) {
-  const nav = await utils.getNav();
-  res.render('inventory/add_classification', {
-    title: "Add New Classification",
-    nav,
-  });
+async function buildAddClassification(req, res, next) {
+  try {
+    const nav = await utils.getNav();
+    res.render('inventory/add_classification', {
+      title: 'Add New Classification',
+      nav,
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
-async function buildAddInventory(req, res) {
-  const nav = await utils.getNav();
-  const classificationSelect = await utils.getClassificationDropdown();
-  // Pass empty values to avoid ReferenceError in EJS
-  res.render('inventory/add_inventory', {
-    title: "Add New Vehicle",
-    nav,
-    classificationSelect,
-    inv_make: '',
-    inv_model: '',
-    inv_year: '',
-    inv_description: '',
-    inv_image: '/images/vehicles/no-image.png',
-    inv_thumbnail: '/images/vehicles/no-image.png',
-    inv_price: '',
-    inv_miles: '',
-    inv_color: '',
-  });
+async function buildAddInventory(req, res, next) {
+  try {
+    const nav = await utils.getNav();
+    const classifications = await invModel.getAllClassifications();
+    res.render('inventory/add_inventory', {
+      title: 'Add New Vehicle',
+      nav,
+      classifications,
+      // preserve sticky values
+      inv_make: req.body?.inv_make || '',
+      inv_model: req.body?.inv_model || '',
+      inv_year: req.body?.inv_year || '',
+      inv_description: req.body?.inv_description || '',
+      inv_image: req.body?.inv_image || '/images/vehicles/no-image.png',
+      inv_thumbnail: req.body?.inv_thumbnail || '/images/vehicles/no-image.png',
+      inv_price: req.body?.inv_price || '',
+      inv_miles: req.body?.inv_miles || '',
+      inv_color: req.body?.inv_color || '',
+      classification_id: req.body?.classification_id || '',
+    });
+  } catch (error) {
+    next(error);
+  }
 }
 
 async function addClassification(req, res, next) {
@@ -59,7 +72,7 @@ async function addClassification(req, res, next) {
     if (result) {
       res.redirect('/inventory');
     } else {
-      throw new Error("Failed to add classification.");
+      throw new Error('Classification could not be added');
     }
   } catch (error) {
     next(error);
@@ -73,7 +86,7 @@ async function addInventory(req, res, next) {
     if (result) {
       res.redirect('/inventory');
     } else {
-      throw new Error("Failed to add vehicle.");
+      throw new Error('Vehicle could not be added');
     }
   } catch (error) {
     next(error);
@@ -86,5 +99,5 @@ module.exports = {
   buildAddClassification,
   buildAddInventory,
   addClassification,
-  addInventory
+  addInventory,
 };
