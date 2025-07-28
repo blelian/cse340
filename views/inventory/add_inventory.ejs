@@ -1,0 +1,43 @@
+<%- include("../layouts/partials/head") %>
+
+<body>
+  <main>
+    <h1>Add New Inventory Item</h1>
+    <form action="/inventory/add-inventory" method="post">
+      <label for="make">Make</label>
+      <input type="text" id="make" name="inv_make" value="<%= inv_make || '' %>" required>
+
+      <label for="model">Model</label>
+      <input type="text" id="model" name="inv_model" value="<%= inv_model || '' %>" required>
+
+      <label for="year">Year</label>
+      <input type="number" id="year" name="inv_year" value="<%= inv_year || '' %>" required>
+
+      <label for="description">Description</label>
+      <textarea id="description" name="inv_description" required><%= inv_description || '' %></textarea>
+
+      <label for="image">Image Path</label>
+      <input type="text" id="image" name="inv_image" value="<%= inv_image || '/images/vehicles/no-image.png' %>" required>
+
+      <label for="thumbnail">Thumbnail Path</label>
+      <input type="text" id="thumbnail" name="inv_thumbnail" value="<%= inv_thumbnail || '/images/vehicles/no-image.png' %>" required>
+
+      <label for="price">Price</label>
+      <input type="number" id="price" name="inv_price" value="<%= inv_price || '' %>" required>
+
+      <label for="miles">Miles</label>
+      <input type="number" id="miles" name="inv_miles" value="<%= inv_miles || '' %>" required>
+
+      <label for="color">Color</label>
+      <input type="text" id="color" name="inv_color" value="<%= inv_color || '' %>" required>
+
+      <label for="classification_id">Classification</label>
+      <select id="classification_id" name="classification_id" required>
+        <%- classificationSelect %>
+      </select>
+
+      <button type="submit">Add Vehicle</button>
+    </form>
+  </main>
+</body>
+</html>

@@ -1,6 +1,7 @@
 // utils/index.js
 const utilities = {};
 const { getNav } = require('./nav');
+const pool = require('../database'); // Needed for classification dropdown
 
 utilities.getNav = getNav;
 
@@ -21,6 +22,16 @@ utilities.buildDetailGrid = async function (data) {
       </div>
     </section>
   `;
+};
+
+// Build the classification dropdown
+utilities.getClassificationDropdown = async function () {
+  const data = await pool.query('SELECT * FROM classification ORDER BY classification_name');
+  let options = '<option value="">Select a classification</option>';
+  data.rows.forEach(classification => {
+    options += `<option value="${classification.classification_id}">${classification.classification_name}</option>`;
+  });
+  return `<select name="classification_id" id="classification_id" required>${options}</select>`;
 };
 
 module.exports = utilities;

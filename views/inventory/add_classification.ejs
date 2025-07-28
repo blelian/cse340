@@ -1,0 +1,13 @@
+<%- include("../layouts/partials/head") %>
+
+<body>
+  <main>
+    <h1>Add New Classification</h1>
+    <form action="/inventory/add-classification" method="post">
+      <label for="classification_name">Classification Name</label>
+      <input type="text" id="classification_name" name="classification_name" required maxlength="30">
+      <button type="submit">Add Classification</button>
+    </form>
+  </main>
+</body>
+</html>

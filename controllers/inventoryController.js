@@ -1,5 +1,5 @@
 const invModel = require('../models/inventoryModel');
-const utils = require('../utilities/');
+const utils = require('../utilities');
 
 async function buildById(req, res, next) {
   try {
@@ -9,11 +9,72 @@ async function buildById(req, res, next) {
     res.render('inventory/detail', {
       title: data.inv_make + " " + data.inv_model,
       nav,
-      vehicle: data,  
+      vehicle: data,
     });
   } catch (error) {
     next(error);
   }
 }
 
-module.exports = { buildById };
+async function buildManagement(req, res) {
+  const nav = await utils.getNav();
+  res.render('inventory/management', {
+    title: "Inventory Management",
+    nav,
+  });
+}
+
+async function buildAddClassification(req, res) {
+  const nav = await utils.getNav();
+  res.render('inventory/add_classification', {
+    title: "Add New Classification",
+    nav,
+  });
+}
+
+async function buildAddInventory(req, res) {
+  const nav = await utils.getNav();
+  const classificationSelect = await utils.getClassificationDropdown();
+  res.render('inventory/add_inventory', {
+    title: "Add New Vehicle",
+    nav,
+    classificationSelect,
+  });
+}
+
+async function addClassification(req, res, next) {
+  try {
+    const { classification_name } = req.body;
+    const result = await invModel.addClassification(classification_name);
+    if (result) {
+      res.redirect('/inventory');
+    } else {
+      throw new Error("Failed to add classification.");
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function addInventory(req, res, next) {
+  try {
+    const invData = req.body;
+    const result = await invModel.addInventory(invData);
+    if (result) {
+      res.redirect('/inventory');
+    } else {
+      throw new Error("Failed to add vehicle.");
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = {
+  buildById,
+  buildManagement,
+  buildAddClassification,
+  buildAddInventory,
+  addClassification,
+  addInventory
+};
