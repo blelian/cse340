@@ -32,34 +32,29 @@ async function buildAddClassification(req, res) {
   });
 }
 
-async function buildAddInventory(req, res, next) {
-  try {
-    const nav = await utils.getNav();
-    const classificationSelect = await utils.getClassificationDropdown();
-    res.render('inventory/add_inventory', {
-      title: "Add New Vehicle",
-      nav,
-      classificationSelect,
-    });
-  } catch (error) {
-    next(error);
-  }
+async function buildAddInventory(req, res) {
+  const nav = await utils.getNav();
+  const classificationSelect = await utils.getClassificationDropdown();
+  // Pass empty values to avoid ReferenceError in EJS
+  res.render('inventory/add_inventory', {
+    title: "Add New Vehicle",
+    nav,
+    classificationSelect,
+    inv_make: '',
+    inv_model: '',
+    inv_year: '',
+    inv_description: '',
+    inv_image: '/images/vehicles/no-image.png',
+    inv_thumbnail: '/images/vehicles/no-image.png',
+    inv_price: '',
+    inv_miles: '',
+    inv_color: '',
+  });
 }
 
 async function addClassification(req, res, next) {
   try {
     const { classification_name } = req.body;
-    const exists = await invModel.getClassificationByName(classification_name);
-
-    if (exists) {
-      const nav = await utils.getNav();
-      return res.status(400).render('inventory/add_classification', {
-        title: "Add New Classification",
-        nav,
-        message: "Classification already exists. Please use a different name."
-      });
-    }
-
     const result = await invModel.addClassification(classification_name);
     if (result) {
       res.redirect('/inventory');
