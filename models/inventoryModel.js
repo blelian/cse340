@@ -18,6 +18,12 @@ async function addClassification(classification_name) {
   return result.rows[0];
 }
 
+async function getClassificationByName(name) {
+  const sql = 'SELECT * FROM classification WHERE classification_name = $1';
+  const result = await pool.query(sql, [name]);
+  return result.rows[0];
+}
+
 async function addInventory(data) {
   const sql = `
     INSERT INTO inventory (
@@ -47,5 +53,6 @@ async function addInventory(data) {
 module.exports = {
   getVehicleById,
   addClassification,
-  addInventory
+  addInventory,
+  getClassificationByName
 };
