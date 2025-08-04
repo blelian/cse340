@@ -1,30 +1,43 @@
-// utils/index.js
-const utilities = {};
+// utilities/index.js
+const pool = require('../database');
 const { getNav } = require('./nav');
-const pool = require('../database'); // Needed for classification dropdown
 
+const utilities = {};
+
+// Navigation HTML builder
 utilities.getNav = getNav;
 
-utilities.buildDetailGrid = async function (data) {
-  if (!data) {
-    return '<p>Sorry, no vehicle details found.</p>';
-  }
+// Builds a vehicle listing grid from data
+utilities.buildClassificationGrid = async function (data) {
+  let grid;
+  if (data.length > 0) {
+    grid = '<ul id="inv-display">';
+    data.forEach(vehicle => {
+      const formattedPrice = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+      }).format(vehicle.inv_price);
 
-  return `
-    <section class="vehicle-detail">
-      <img src="${data.inv_image}" alt="Image of ${data.inv_make} ${data.inv_model}">
-      <div class="vehicle-info">
-        <h2>${data.inv_make} ${data.inv_model} (${data.inv_year})</h2>
-        <p><strong>Price:</strong> $${Number(data.inv_price).toLocaleString()}</p>
-        <p><strong>Description:</strong> ${data.inv_description}</p>
-        <p><strong>Color:</strong> ${data.inv_color}</p>
-        <p><strong>Mileage:</strong> ${Number(data.inv_miles).toLocaleString()} miles</p>
-      </div>
-    </section>
-  `;
+      grid += '<li>';
+      grid += `<a href="/inventory/detail/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model} details">`;
+      // Use thumbnail image here for classification grid
+      grid += `<img src="${vehicle.inv_thumbnail}" alt="Image of ${vehicle.inv_make} ${vehicle.inv_model} on CSE Motors" /></a>`;
+      grid += '<div class="namePrice">';
+      grid += '<hr />';
+      grid += `<h2><a href="/inventory/detail/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model} details">`;
+      grid += `${vehicle.inv_make} ${vehicle.inv_model}</a></h2>`;
+      grid += `<span>${formattedPrice}</span>`;
+      grid += '</div>';
+      grid += '</li>';
+    });
+    grid += '</ul>';
+  } else {
+    grid = '<p class="notice">Sorry, no matching vehicles could be found.</p>';
+  }
+  return grid;
 };
 
-// Build the classification dropdown
+// Classification dropdown builder (for Add Inventory form)
 utilities.getClassificationDropdown = async function () {
   const data = await pool.query('SELECT * FROM classification ORDER BY classification_name');
   let options = '<option value="">Select a classification</option>';

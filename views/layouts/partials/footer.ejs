@@ -1,11 +1,34 @@
-<% const d = new Date() 
-   let year = d.getFullYear() %>
+<% const d = new Date(); let year = d.getFullYear(); %>
+
 <footer>
-  <p class="copyright">&copy; <%= year %>, CSE340 App</p>
+  <!-- Road signs separated -->
+  <div class="footer-road-signs">
+    <span class="left-sign">🚸</span>
+    <span class="center-sign">🛑</span>
+    <span class="right-sign">🚦</span>
+  </div>
+
+  <!-- Trees on sides -->
+  <span class="footer-tree-left">🌲</span>
+  <span class="footer-tree-right">🌳</span>
+
+  <!-- Animated Emojis (Cars) -->
+  <div class="footer-emoji-container">
+    <span class="footer-emoji">🚗</span>
+    <span class="footer-emoji">🚓</span>
+    <span class="footer-emoji">🚙</span>
+  </div>
+
+ 
+  <!-- Error Button -->
   <p>
-    <a href="/error/trigger-error" class="error-link" 
-       aria-label="Trigger server error for testing">
-       Trigger 500 Error
+    <a href="/error/trigger-error" class="error-link" aria-label="Trigger server error for testing">
+      Trigger 500 Error
     </a>
+  </p>
+
+  <!-- Copyright -->
+  <p class="copyright">
+    &copy; <%= year %>, CSE340 App
   </p>
 </footer>

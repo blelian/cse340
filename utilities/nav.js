@@ -1,17 +1,14 @@
-// utilities/nav.js
+const pool = require('../database');
+
 async function getNav() {
-  return `
-    <nav>
-      <ul>
-        <li><a href="/">Home</a></li>
-        <li><a href="/custom">Custom</a></li>
-        <li><a href="/sedan">Sedan</a></li>
-        <li><a href="/sport">Sport</a></li>
-        <li><a href="/suv">SUV</a></li>
-        <li><a href="/truck">Truck</a></li>
-      </ul>
-    </nav>
-  `;
+  const data = await pool.query('SELECT classification_id, classification_name FROM classification ORDER BY classification_name');
+  let nav = '<ul id="nav-menu">';
+  nav += '<li><a href="/" title="Home page">Home</a></li>';
+  data.rows.forEach(row => {
+    nav += `<li><a href="/inventory/type/${row.classification_id}" title="View our ${row.classification_name} vehicles">${row.classification_name}</a></li>`;
+  });
+  nav += '</ul>';
+  return nav;
 }
 
 module.exports = { getNav };

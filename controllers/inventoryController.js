@@ -1,11 +1,21 @@
+// controllers/inventoryController.js
 const invModel = require('../models/inventoryModel');
 const utils = require('../utilities');
 
+// Build vehicle detail view
 async function buildById(req, res, next) {
   try {
     const invId = parseInt(req.params.invId);
     const data = await invModel.getVehicleById(invId);
     const nav = await utils.getNav();
+
+    if (!data) {
+      // Vehicle not found, forward to 404 error handler
+      const err = new Error('Vehicle not found');
+      err.status = 404;
+      throw err;
+    }
+
     res.render('inventory/detail', {
       title: `${data.inv_make} ${data.inv_model}`,
       nav,
@@ -16,6 +26,9 @@ async function buildById(req, res, next) {
   }
 }
 
+// Other controller functions (unchanged)...
+
+// Inventory management view
 async function buildManagement(req, res, next) {
   try {
     const nav = await utils.getNav();
@@ -28,6 +41,7 @@ async function buildManagement(req, res, next) {
   }
 }
 
+// Add classification form
 async function buildAddClassification(req, res, next) {
   try {
     const nav = await utils.getNav();
@@ -40,15 +54,16 @@ async function buildAddClassification(req, res, next) {
   }
 }
 
+// Add inventory form
 async function buildAddInventory(req, res, next) {
   try {
     const nav = await utils.getNav();
     const classifications = await invModel.getAllClassifications();
+
     res.render('inventory/add_inventory', {
       title: 'Add New Vehicle',
       nav,
       classifications,
-      // preserve sticky values
       inv_make: req.body?.inv_make || '',
       inv_model: req.body?.inv_model || '',
       inv_year: req.body?.inv_year || '',
@@ -65,10 +80,12 @@ async function buildAddInventory(req, res, next) {
   }
 }
 
+// Process classification form
 async function addClassification(req, res, next) {
   try {
     const { classification_name } = req.body;
     const result = await invModel.addClassification(classification_name);
+
     if (result) {
       res.redirect('/inventory');
     } else {
@@ -79,15 +96,37 @@ async function addClassification(req, res, next) {
   }
 }
 
+// Process inventory form
 async function addInventory(req, res, next) {
   try {
     const invData = req.body;
     const result = await invModel.addInventory(invData);
+
     if (result) {
       res.redirect('/inventory');
     } else {
       throw new Error('Vehicle could not be added');
     }
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Build classification view (unchanged)
+async function buildByClassificationId(req, res, next) {
+  try {
+    const classificationId = req.params.classificationId;
+    const data = await invModel.getInventoryByClassificationId(classificationId);
+    const nav = await utils.getNav();
+    const grid = await utils.buildClassificationGrid(data);
+
+    const className = data.length > 0 ? data[0].classification_name : "Vehicles";
+
+    res.render('inventory/classification', {
+      title: `${className} vehicles`,
+      nav,
+      grid,
+    });
   } catch (error) {
     next(error);
   }
@@ -100,4 +139,5 @@ module.exports = {
   buildAddInventory,
   addClassification,
   addInventory,
+  buildByClassificationId,
 };
