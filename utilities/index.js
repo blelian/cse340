@@ -47,4 +47,11 @@ utilities.getClassificationDropdown = async function () {
   return `<select name="classification_id" id="classification_id" required>${options}</select>`;
 };
 
+// Async error handler wrapper for controllers
+utilities.handleErrors = function (fn) {
+  return function (req, res, next) {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
+
 module.exports = utilities;

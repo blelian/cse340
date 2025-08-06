@@ -15,7 +15,7 @@ async function getAllClassifications() {
   return result.rows;
 }
 
-// Get inventory by classificationId with JOIN (✅ fix included)
+// Get inventory by classificationId with JOIN
 async function getInventoryByClassificationId(classificationId) {
   const sql = `
     SELECT 

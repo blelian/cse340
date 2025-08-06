@@ -1,4 +1,3 @@
-// controllers/inventoryController.js
 const invModel = require('../models/inventoryModel');
 const utils = require('../utilities');
 
@@ -10,7 +9,6 @@ async function buildById(req, res, next) {
     const nav = await utils.getNav();
 
     if (!data) {
-      // Vehicle not found, forward to 404 error handler
       const err = new Error('Vehicle not found');
       err.status = 404;
       throw err;
@@ -25,8 +23,6 @@ async function buildById(req, res, next) {
     next(error);
   }
 }
-
-// Other controller functions (unchanged)...
 
 // Inventory management view
 async function buildManagement(req, res, next) {
@@ -80,39 +76,45 @@ async function buildAddInventory(req, res, next) {
   }
 }
 
-// Process classification form
+// Process classification form submission
 async function addClassification(req, res, next) {
   try {
     const { classification_name } = req.body;
     const result = await invModel.addClassification(classification_name);
 
     if (result) {
-      res.redirect('/inventory');
+      req.flash('notice', `Classification "${classification_name}" added successfully.`);
+      return res.redirect('/inventory/add-classification');
     } else {
-      throw new Error('Classification could not be added');
+      req.flash('error', 'Classification could not be added. Please try again.');
+      return res.redirect('/inventory/add-classification');
     }
   } catch (error) {
-    next(error);
+    req.flash('error', 'An unexpected error occurred. Please try again.');
+    return res.redirect('/inventory/add-classification');
   }
 }
 
-// Process inventory form
+// Process inventory form submission
 async function addInventory(req, res, next) {
   try {
     const invData = req.body;
     const result = await invModel.addInventory(invData);
 
     if (result) {
-      res.redirect('/inventory');
+      req.flash('notice', `Vehicle "${invData.inv_make} ${invData.inv_model}" added successfully.`);
+      return res.redirect('/inventory/add-inventory');
     } else {
-      throw new Error('Vehicle could not be added');
+      req.flash('error', 'Vehicle could not be added. Please try again.');
+      return res.redirect('/inventory/add-inventory');
     }
   } catch (error) {
-    next(error);
+    req.flash('error', 'An unexpected error occurred. Please try again.');
+    return res.redirect('/inventory/add-inventory');
   }
 }
 
-// Build classification view (unchanged)
+// Build vehicles by classification view
 async function buildByClassificationId(req, res, next) {
   try {
     const classificationId = req.params.classificationId;

@@ -1,0 +1,105 @@
+:root {
+  --color-form-bg: #ffffff;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+  --padding-large: 2rem;
+  --form-max-width: 600px;
+  --input-border: #ccc;
+  --primary-color: #003366;
+  --primary-hover: #0055aa;
+}
+
+/* Form wrapper styles - scoped so it doesn't affect other pages like 'details' */
+.form-wrapper {
+  max-width: var(--form-max-width);
+  margin: 2rem auto;
+  padding: var(--padding-large);
+  background-color: var(--color-form-bg);
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 10px var(--color-shadow);
+}
+
+/* Container for form elements */
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Labels */
+.form-container label {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+/* Inputs, textareas, selects */
+.form-container input,
+.form-container select,
+.form-container textarea {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid var(--input-border);
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+/* Textarea specific */
+.form-container textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* Submit button */
+.form-container button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+  align-self: flex-start;
+}
+
+.form-container button:hover {
+  background-color: var(--primary-hover);
+}
+
+h1{text-align: center;
+color: var(--primary-color)}
+
+.admin-links {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+  /* keep vertical stacking, so no flex or grid */
+}
+
+.admin-links li {
+  margin-bottom: 1rem; /* space between buttons vertically */
+}
+
+/* Optional: remove margin from last item */
+.admin-links li:last-child {
+  margin-bottom: 0;
+}
+
+.admin-links a {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  width: 30%; /* optional, full width buttons */
+  box-sizing: border-box;
+}
+
+.admin-links a:hover {
+  background-color: var(--primary-hover);
+}
