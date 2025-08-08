@@ -1,62 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <%- include('../layouts/partials/head') %>
-  <link rel="stylesheet" href="/css/styles.css" />
-  <link rel="stylesheet" href="/css/forms.css" />
-</head>
-<body>
-  <%- include('../layouts/partials/header') %>
+<%- include('../layouts/partials/header') %>
 
-  <main>
-    <h1>Add New Vehicle</h1>
+<div class="form-wrapper">
+  <h1>Add New Inventory Item</h1>
+  <form class="form-container" action="/inventory/add" method="post">
+    
+    <!-- Classification Dropdown -->
+    <label for="classification_id">Classification</label>
+    <select id="classification_id" name="classification_id" class="styled-dropdown" required>
+      <option value="">-- Select Classification --</option>
+      <% classifications.forEach(c => { %>
+        <option value="<%= c.classification_id %>" <%= classification_id == c.classification_id ? "selected" : "" %>>
+          <%= c.classification_name %>
+        </option>
+      <% }) %>
+    </select>
 
-    <%- messages() %> <!-- Flash messages -->
+    <!-- Make -->
+    <label for="inv_make">Make</label>
+    <input type="text" id="inv_make" name="inv_make" value="<%= inv_make || '' %>" required>
 
-    <div class="form-wrapper">
-      <form class="form-container" action="/inventory/add-inventory" method="post">
-        <label for="make">Make</label>
-        <input type="text" id="make" name="inv_make" value="<%= inv_make %>" required>
+    <!-- Model -->
+    <label for="inv_model">Model</label>
+    <input type="text" id="inv_model" name="inv_model" value="<%= inv_model || '' %>" required>
 
-        <label for="model">Model</label>
-        <input type="text" id="model" name="inv_model" value="<%= inv_model %>" required>
+    <!-- Year -->
+    <label for="inv_year">Year</label>
+    <input type="number" id="inv_year" name="inv_year" value="<%= inv_year || '' %>" required>
 
-        <label for="year">Year</label>
-        <input type="number" id="year" name="inv_year" value="<%= inv_year %>" required>
+    <!-- Description -->
+    <label for="inv_description">Description</label>
+    <textarea id="inv_description" name="inv_description" required><%= inv_description || '' %></textarea>
 
-        <label for="description">Description</label>
-        <textarea id="description" name="inv_description" required><%= inv_description %></textarea>
+    <!-- Image Path -->
+    <label for="inv_image">Image Path</label>
+    <input type="text" id="inv_image" name="inv_image" value="<%= inv_image || '' %>" required>
 
-        <label for="image">Image Path</label>
-        <input type="text" id="image" name="inv_image" value="<%= inv_image %>" required>
+    <!-- Thumbnail Path -->
+    <label for="inv_thumbnail">Thumbnail Path</label>
+    <input type="text" id="inv_thumbnail" name="inv_thumbnail" value="<%= inv_thumbnail || '' %>" required>
 
-        <label for="thumbnail">Thumbnail Path</label>
-        <input type="text" id="thumbnail" name="inv_thumbnail" value="<%= inv_thumbnail %>" required>
+    <!-- Price -->
+    <label for="inv_price">Price</label>
+    <input type="number" id="inv_price" name="inv_price" step="0.01" value="<%= inv_price || '' %>" required>
 
-        <label for="price">Price</label>
-        <input type="number" id="price" name="inv_price" value="<%= inv_price %>" required>
+    <!-- Miles -->
+    <label for="inv_miles">Miles</label>
+    <input type="number" id="inv_miles" name="inv_miles" value="<%= inv_miles || '' %>" required>
 
-        <label for="miles">Miles</label>
-        <input type="number" id="miles" name="inv_miles" value="<%= inv_miles %>" required>
+    <!-- Color -->
+    <label for="inv_color">Color</label>
+    <input type="text" id="inv_color" name="inv_color" value="<%= inv_color || '' %>" required>
 
-        <label for="color">Color</label>
-        <input type="text" id="color" name="inv_color" value="<%= inv_color %>" required>
+    <!-- Submit -->
+    <button type="submit">Add Vehicle</button>
+  </form>
+</div>
 
-        <label for="classification_id">Classification</label>
-        <select id="classification_id" name="classification_id" required>
-          <option value="">Choose a classification</option>
-          <% classifications.forEach(c => { %>
-            <option value="<%= c.classification_id %>" <%= c.classification_id == classification_id ? 'selected' : '' %>>
-              <%= c.classification_name %>
-            </option>
-          <% }) %>
-        </select>
-
-        <button type="submit">Add Vehicle</button>
-      </form>
-    </div>
-  </main>
-
-  <%- include('../layouts/partials/footer') %>
-</body>
-</html>
+<%- include('../layouts/partials/footer') %>

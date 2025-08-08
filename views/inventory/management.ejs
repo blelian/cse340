@@ -1,21 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <%- include('../layouts/partials/head') %>
-  <link rel="stylesheet" href="/css/forms.css">
-</head>
-<body>
-  <%- include('../layouts/partials/header') %>
+<%- include('../layouts/partials/head') %>
+<%- include('../layouts/partials/header') %>
 
-  <main>
-    <h1>Inventory Management</h1>
-    <p>Choose an option below:</p>
-    <ul class=admin-links>
-      <li><a href="/inventory/add-classification">Add New Classification</a></li>
-      <li><a href="/inventory/add-inventory">Add New Vehicle</a></li>
-    </ul>
-  </main>
+<h1>Inventory Management</h1>
 
-  <%- include('../layouts/partials/footer') %>
-</body>
-</html>
+<div class="form-wrapper">
+  <div class="form-container">
+    <label for="classification_id">Select Classification</label>
+    <form id="classificationForm" method="GET" action="/inv/management">
+      <select id="classification_id" name="classification_id" class="styled-dropdown" onchange="this.form.submit()">
+        <% classifications.forEach(classification => { %>
+          <option value="<%= classification.classification_id %>" 
+            <% if (classification.classification_id === selectedClassificationId) { %> selected <% } %>>
+            <%= classification.classification_name %>
+          </option>
+        <% }) %>
+      </select>
+    </form>
+  </div>
+
+  <table id="inventoryDisplay">
+    <thead>
+      <tr>
+        <th>Make</th>
+        <th>Model</th>
+        <th>Year</th>
+        <th>Price</th>
+        <th>Modify</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (inventory && inventory.length > 0) { %>
+        <% inventory.forEach(vehicle => { %>
+          <tr>
+            <td><%= vehicle.inv_make %></td>
+            <td><%= vehicle.inv_model %></td>
+            <td><%= vehicle.inv_year %></td>
+            <td>$<%= vehicle.inv_price.toLocaleString() %></td>
+            <td><a href="/inv/edit/<%= vehicle.inv_id %>">Edit</a></td>
+            <td><a href="/inv/delete/<%= vehicle.inv_id %>">Delete</a></td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="6">No vehicles found for this classification.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<%- include('../layouts/partials/footer') %>

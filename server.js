@@ -2,8 +2,9 @@
 const express = require('express');
 const app = express();
 const path = require('path');
+const cookieParser = require('cookie-parser');
 
-// Load environment variables
+// Load env variables
 require('dotenv').config();
 
 const session = require('express-session');
@@ -11,47 +12,51 @@ const pgSession = require('connect-pg-simple')(session);
 const flash = require('connect-flash');
 const expressMessages = require('express-messages');
 
-const pool = require('./database'); // Your DB connection pool
+const pool = require('./database'); // PostgreSQL pool connection
 
-// Controllers & Routes
+// Controllers & routes
 const baseController = require('./controllers/baseController');
 const inventoryRoute = require('./routes/inventoryRoute');
 const errorRoute = require('./routes/errorRoute');
 const homeRoute = require('./routes/home');
-const accountRoute = require('./routes/accountRoute'); // For account features
+const accountRoute = require('./routes/accountRoute');
 
 // Middleware
 const errorHandler = require('./middleware/errorHandler');
 
+app.use(cookieParser());
+
 // Static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Parse incoming requests
+// Request parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ✅ Session middleware using PostgreSQL session store
+// Session middleware with PostgreSQL store
 app.use(
   session({
     store: new pgSession({
       pool,
       createTableIfMissing: true,
     }),
-    secret: process.env.SESSION_SECRET, // ✅ Must be set in .env or Render env vars
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     name: 'sessionId',
     cookie: {
-      secure: false, // Set to true if using HTTPS
+      secure: false, // change to true if HTTPS
       maxAge: 1000 * 60 * 60 * 2, // 2 hours
     },
   })
 );
 
-// Flash messages
+// Flash messages middleware
 app.use(flash());
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   res.locals.messages = expressMessages(req, res);
+  // Make logged-in account available to views if present
+  res.locals.account = req.session.account || null;
   next();
 });
 
@@ -62,10 +67,11 @@ app.set('views', path.join(__dirname, 'views'));
 // Routes
 app.use('/', homeRoute);
 app.use('/inventory', inventoryRoute);
-app.use('/account', accountRoute); // Account routes
+app.use('/inv', inventoryRoute);
+app.use('/account', accountRoute);
 app.use('/error', errorRoute);
 
-// 404 handler
+// 404 catch-all handler
 app.use((req, res) => {
   res.status(404).render('errors/404', {
     title: '404 Not Found',
@@ -76,7 +82,7 @@ app.use((req, res) => {
 // Global error handler
 app.use(errorHandler);
 
-// Server listener
+// Start server
 const PORT = process.env.PORT || 5500;
 app.listen(PORT, () => {
   console.log(`App is running on http://localhost:${PORT}`);
