@@ -1,16 +1,12 @@
-const express = require('express');
-const router = express.Router();
+// routes/inventoryRoute.js
+const express = require("express");
+const router = new express.Router();
+const invController = require("../controllers/inventoryController");
 
-const invController = require('../controllers/inventoryController');
-const auth = require('../utilities/authAdmin');
+// View inventory by classification
+router.get("/type/:classificationId", invController.buildByClassificationId);
 
-// Public route - Inventory homepage
-router.get('/', invController.buildManagement);
-
-// Admin-protected management page
-router.get('/management', auth.checkLogin, auth.checkAdmin, invController.buildManagement);
-
-// Classification route for filtered inventory
-router.get('/type/:classificationId', invController.buildByClassificationId);
+// JSON route for dropdown
+router.get("/getInventory/:classification_id", invController.getInventoryJSON);
 
 module.exports = router;

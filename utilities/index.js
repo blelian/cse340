@@ -1,3 +1,4 @@
+// utilities/index.js
 const pool = require('../database');
 const { getNav } = require('./nav');
 const jwt = require("jsonwebtoken");

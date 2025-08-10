@@ -1,135 +1,74 @@
 // controllers/accountController.js
-const utilities = require('../utilities');
-const accountModel = require('../models/accountModel');
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const utils = require("../utilities/");
+const pool = require("../database/");
 
-// Show the login page
 async function buildLogin(req, res) {
-  res.render('account/login', {
-    title: 'Login',
-    nav: await utilities.getNav(),
-    errors: null,
-    account_email: '',
-  });
+  const nav = await utils.getNav();
+  res.render("account/login", { title: "Login", nav, errors: null });
 }
 
-// Process login form submission
-async function loginAccount(req, res) {
-  const { account_email, account_password } = req.body;
-  const accountData = await accountModel.getAccountByEmail(account_email);
-
-  if (!accountData) {
-    return res.status(401).render('account/login', {
-      title: 'Login',
-      nav: await utilities.getNav(),
-      errors: [{ msg: 'Invalid email or password' }],
-      account_email,
-    });
-  }
-
-  const passwordMatch = await bcrypt.compare(account_password, accountData.account_password);
-  if (!passwordMatch) {
-    return res.status(401).render('account/login', {
-      title: 'Login',
-      nav: await utilities.getNav(),
-      errors: [{ msg: 'Invalid email or password' }],
-      account_email,
-    });
-  }
-
-  // Save account data in session (omit password)
-  req.session.account = {
-    account_id: accountData.account_id,
-    account_firstname: accountData.account_firstname,
-    account_lastname: accountData.account_lastname,
-    account_email: accountData.account_email,
-    account_type: accountData.account_type,
-  };
-
-  // Redirect to originally requested page or dashboard
-  const redirectTo = req.session.redirectTo || '/account';
-  delete req.session.redirectTo;
-  res.redirect(redirectTo);
-}
-
-// Show registration page
 async function buildRegister(req, res) {
-  res.render('account/register', {
-    title: 'Register',
-    nav: await utilities.getNav(),
-    errors: null,
-    account_firstname: '',
-    account_lastname: '',
-    account_email: '',
-  });
+  const nav = await utils.getNav();
+  res.render("account/register", { title: "Register", nav, errors: null });
 }
 
-// Process registration form submission
-async function registerAccount(req, res) {
+async function registerAccount(req, res, next) {
   try {
-    const { account_firstname, account_lastname, account_email, account_password } = req.body;
+    const { first_name, last_name, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Hash password before storing
-    const hashedPassword = await bcrypt.hash(account_password, 10);
+    await pool.query(
+      `INSERT INTO account (first_name, last_name, email, password)
+       VALUES ($1, $2, $3, $4)`,
+      [first_name, last_name, email, hashedPassword]
+    );
 
-    const newAccount = {
-      account_firstname,
-      account_lastname,
-      account_email,
-      account_password: hashedPassword,
-    };
-
-    const regResult = await accountModel.registerAccount(newAccount);
-
-    if (regResult) {
-      // Registration success, redirect to login with success message
-      req.flash('success', 'Registration successful. Please log in.');
-      res.redirect('/account/login');
-    } else {
-      throw new Error('Registration failed');
-    }
+    res.redirect("/account/login");
   } catch (error) {
-    console.error('Registration error:', error);
-    res.status(500).render('account/register', {
-      title: 'Register',
-      nav: await utilities.getNav(),
-      errors: [{ msg: 'An error occurred during registration. Please try again.' }],
-      account_firstname: req.body.account_firstname,
-      account_lastname: req.body.account_lastname,
-      account_email: req.body.account_email,
-    });
+    next(error);
   }
 }
 
-// Show account dashboard for logged-in users
-async function showDashboard(req, res) {
-  if (!req.session.account) {
-    return res.redirect('/account/login');
-  }
-
-  res.render('account/account', {
-    title: 'Dashboard',
-    nav: await utilities.getNav(),
-    accountData: req.session.account,
-  });
-}
-
-// Logout and destroy session
-async function logoutAccount(req, res) {
-  req.session.destroy((err) => {
-    if (err) {
-      console.error('Logout error:', err);
+async function loginAccount(req, res, next) {
+  try {
+    const { email, password } = req.body;
+    const result = await pool.query("SELECT * FROM account WHERE email = $1", [email]);
+    if (result.rowCount === 0) {
+      return res.status(400).render("account/login", {
+        title: "Login",
+        nav: await utils.getNav(),
+        errors: [{ msg: "Invalid email or password" }],
+      });
     }
-    res.clearCookie('sessionId');
-    res.redirect('/account/login');
-  });
+
+    const account = result.rows[0];
+    const validPassword = await bcrypt.compare(password, account.password);
+    if (!validPassword) {
+      return res.status(400).render("account/login", {
+        title: "Login",
+        nav: await utils.getNav(),
+        errors: [{ msg: "Invalid email or password" }],
+      });
+    }
+
+    const token = jwt.sign(
+      { account_id: account.account_id, email: account.email },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1h" }
+    );
+
+    res.cookie("jwt", token, { httpOnly: true });
+    res.redirect("/");
+  } catch (error) {
+    next(error);
+  }
 }
 
-module.exports = {
-  buildLogin,
-  loginAccount,
-  buildRegister,
-  registerAccount,
-  showDashboard,
-  logoutAccount,
-};
+function logoutAccount(req, res) {
+  res.clearCookie("jwt");
+  res.redirect("/");
+}
+
+module.exports = { buildLogin, buildRegister, registerAccount, loginAccount, logoutAccount };

@@ -1,3 +1,4 @@
+// models/inventoryModel.js
 const pool = require('../database');
 
 async function getInventoryByClassificationId(classificationId) {
@@ -80,6 +81,16 @@ async function updateInventory(inv_make, inv_model, inv_year, inv_description, i
   return result.rows[0];
 }
 
+async function deleteInventory(inv_id) {
+  const sql = `
+    DELETE FROM inventory
+    WHERE inv_id = $1
+    RETURNING *;
+  `;
+  const result = await pool.query(sql, [inv_id]);
+  return result.rows[0];
+}
+
 module.exports = {
   getInventoryByClassificationId,
   getAllInventory,
@@ -88,4 +99,5 @@ module.exports = {
   addInventory,
   getInventoryById,
   updateInventory,
+  deleteInventory,
 };

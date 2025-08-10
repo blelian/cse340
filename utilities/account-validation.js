@@ -1,73 +1,38 @@
-// utilities/account-validation.js
-const utilities = require(".");
 const { body, validationResult } = require("express-validator");
-const accountModel = require("../models/accountModel"); // Import your model to check emails
 
-const validate = {};
+// Email validator function for tests and elsewhere
+function validateEmail(email) {
+  const re = /\S+@\S+\.\S+/;
+  return re.test(email);
+}
 
-// Validation rules for registration inputs
-validate.registrationRules = () => {
+const registerRules = () => {
   return [
-    body("account_firstname")
-      .trim()
-      .escape()
-      .notEmpty()
-      .withMessage("Please provide a first name."),
-
-    body("account_lastname")
-      .trim()
-      .escape()
-      .notEmpty()
-      .isLength({ min: 2 })
-      .withMessage("Please provide a last name with at least 2 characters."),
-
-    body("account_email")
-      .trim()
-      .escape()
-      .notEmpty()
-      .isEmail()
-      .normalizeEmail()
-      .withMessage("A valid email is required.")
-      .custom(async (email) => {
-        const existingAccount = await accountModel.getAccountByEmail(email);
-        if (existingAccount) {
-          // Reject with message if email already exists
-          return Promise.reject("An account with that email already exists.");
-        }
-      }),
-
-    body("account_password")
-      .trim()
-      .notEmpty()
-      .isStrongPassword({
-        minLength: 12,
-        minLowercase: 1,
-        minUppercase: 1,
-        minNumbers: 1,
-        minSymbols: 1,
-      })
-      .withMessage(
-        "Password does not meet requirements (min 12 chars, 1 number, 1 uppercase, 1 special char)."
-      ),
+    body("first_name").trim().isLength({ min: 1 }).withMessage("First name is required."),
+    body("last_name").trim().isLength({ min: 1 }).withMessage("Last name is required."),
+    body("email").isEmail().withMessage("Valid email required."),
+    body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters."),
   ];
 };
 
-// Middleware to check validation results and render errors if any
-validate.checkRegData = async (req, res, next) => {
-  const { account_firstname, account_lastname, account_email } = req.body;
-  let errors = validationResult(req);
+const loginRules = () => {
+  return [
+    body("email").isEmail().withMessage("Valid email required."),
+    body("password").notEmpty().withMessage("Password is required."),
+  ];
+};
+
+function checkValidation(req, res, next) {
+  const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    let nav = await utilities.getNav();
-    return res.status(400).render("account/register", {
-      errors,
-      title: "Register",
+    const nav = req.nav || [];
+    return res.status(400).render(`account/${req.path.includes("login") ? "login" : "register"}`, {
+      title: req.path.includes("login") ? "Login" : "Register",
       nav,
-      account_firstname,
-      account_lastname,
-      account_email,
+      errors: errors.array(),
     });
   }
   next();
-};
+}
 
-module.exports = validate;
+module.exports = { registerRules, loginRules, checkValidation, validateEmail };

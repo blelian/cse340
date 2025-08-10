@@ -1,89 +1,62 @@
 // server.js
-const express = require('express');
+require("dotenv").config();
+const express = require("express");
+const path = require("path");
+const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const expressLayouts = require("express-ejs-layouts");
+
 const app = express();
-const path = require('path');
-const cookieParser = require('cookie-parser');
-
-// Load env variables
-require('dotenv').config();
-
-const session = require('express-session');
-const pgSession = require('connect-pg-simple')(session);
-const flash = require('connect-flash');
-const expressMessages = require('express-messages');
-
-const pool = require('./database'); // PostgreSQL pool connection
-
-// Controllers & routes
-const baseController = require('./controllers/baseController');
-const inventoryRoute = require('./routes/inventoryRoute');
-const errorRoute = require('./routes/errorRoute');
-const homeRoute = require('./routes/home');
-const accountRoute = require('./routes/accountRoute');
+const PORT = process.env.PORT || 5500;
 
 // Middleware
-const errorHandler = require('./middleware/errorHandler');
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Set up EJS
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(expressLayouts);
+
 // Static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
 
-// Request parsing
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-// Session middleware with PostgreSQL store
-app.use(
-  session({
-    store: new pgSession({
-      pool,
-      createTableIfMissing: true,
-    }),
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    name: 'sessionId',
-    cookie: {
-      secure: false, // change to true if HTTPS
-      maxAge: 1000 * 60 * 60 * 2, // 2 hours
-    },
-  })
-);
-
-// Flash messages middleware
-app.use(flash());
-app.use((req, res, next) => {
-  res.locals.messages = expressMessages(req, res);
-  // Make logged-in account available to views if present
-  res.locals.account = req.session.account || null;
-  next();
-});
-
-// View engine setup
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// Controllers
+const baseController = require("./controllers/baseController");
 
 // Routes
-app.use('/', homeRoute);
-app.use('/inventory', inventoryRoute);
-app.use('/inv', inventoryRoute);
-app.use('/account', accountRoute);
-app.use('/error', errorRoute);
+const accountRoutes = require("./routes/accountRoute"); // your login/register routes
+const inventoryRoutes = require("./routes/inventoryRoute"); // inventory pages
 
-// 404 catch-all handler
-app.use((req, res) => {
-  res.status(404).render('errors/404', {
-    title: '404 Not Found',
-    message: 'Sorry, the page you requested does not exist.',
+// Home route
+app.get("/", baseController.buildHome);
+
+// Feature routes
+app.use("/account", accountRoutes);
+app.use("/inventory", inventoryRoutes);
+
+// 404 handler
+app.use((req, res, next) => {
+  res.status(404).render("404", {
+    title: "404 - Not Found",
+    nav: [],
+    errors: null,
   });
 });
 
 // Global error handler
-app.use(errorHandler);
+app.use((err, req, res, next) => {
+  console.error("❌ Global Error:", err);
+  res.status(500).render("500", {
+    title: "500 - Server Error",
+    message: err.message,
+    nav: [],
+    errors: null,
+  });
+});
 
-// Start server
-const PORT = process.env.PORT || 5500;
 app.listen(PORT, () => {
   console.log(`App is running on http://localhost:${PORT}`);
 });
+module.exports = app;

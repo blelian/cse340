@@ -1,48 +1,36 @@
-const utilities = require('../utilities');
-const inventoryModel = require('../models/inventoryModel');
-
-async function buildManagement(req, res, next) {
-  try {
-    const nav = await utilities.getNav();
-    const classifications = await inventoryModel.getClassifications();
-
-    const selectedClassificationId = req.query.classification_id
-      ? parseInt(req.query.classification_id, 10)
-      : (classifications[0] ? classifications[0].classification_id : 0);
-
-    const inventory = await inventoryModel.getInventoryByClassificationId(selectedClassificationId);
-
-    res.render('inventory/management', {
-      title: 'Inventory Management',
-      nav,
-      classifications,
-      inventory,
-      selectedClassificationId,
-    });
-  } catch (error) {
-    next(error);
-  }
-}
+// controllers/inventoryController.js
+const invModel = require("../models/inventoryModel");
+const utilities = require("../utilities/");
 
 async function buildByClassificationId(req, res, next) {
+  const classification_id = parseInt(req.params.classificationId);
   try {
-    const classificationId = parseInt(req.params.classificationId, 10);
+    const data = await invModel.getInventoryByClassificationId(classification_id);
     const nav = await utilities.getNav();
-    const inventory = await inventoryModel.getInventoryByClassificationId(classificationId);
-    const grid = await utilities.buildClassificationGrid(inventory);
-    const classificationName = inventory.length > 0 ? inventory[0].classification_name : 'Vehicles';
+    const grid = await utilities.buildClassificationGrid(data);
 
-    res.render('inventory/classification', {
-      title: classificationName,
+    res.render("./inventory/classification", {
+      title: data.length > 0 ? data[0].classification_name + " vehicles" : "No vehicles found",
       nav,
       grid,
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+// JSON endpoint for dropdown fetch
+async function getInventoryJSON(req, res, next) {
+  const classification_id = parseInt(req.params.classification_id);
+  try {
+    const invData = await invModel.getInventoryByClassificationId(classification_id);
+    return res.json(invData);
   } catch (error) {
     next(error);
   }
 }
 
 module.exports = {
-  buildManagement,
   buildByClassificationId,
+  getInventoryJSON
 };

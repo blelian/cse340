@@ -1,3 +1,4 @@
+// utilities/authUtils.js
 const jwt = require("jsonwebtoken");
 
 function createJWT(payload) {

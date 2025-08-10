@@ -1,54 +1,34 @@
 // routes/accountRoute.js
-const express = require('express');
+const express = require("express");
 const router = express.Router();
+const accountController = require("../controllers/accountController");
+const { registerRules, loginRules, checkValidation } = require("../utilities/account-validation");
+const { checkJWTToken } = require("../utilities/jwt-auth");
+const utils = require("../utilities/");
 
-const regValidate = require('../utilities/account-validation');
-const utilities = require('../utilities');
-const accountController = require('../controllers/accountController');
-
-// Middleware to check if user is logged in
-router.use((req, res, next) => {
-  res.locals.account = req.session.account || null;
+// Middleware to load nav for every account route
+router.use(async (req, res, next) => {
+  req.nav = await utils.getNav();
   next();
 });
 
-// Account dashboard - requires login
-router.get(
-  '/',
-  utilities.checkLogin,  // your middleware to ensure session.account exists
-  utilities.handleErrors(accountController.showDashboard)
-);
+// Public routes
+router.get("/login", accountController.buildLogin);
+router.post("/login", loginRules(), checkValidation, accountController.loginAccount);
 
-// Logout route
-router.get(
-  '/logout',
-  utilities.handleErrors(accountController.logoutAccount)
-);
+router.get("/register", accountController.buildRegister);
+router.post("/register", registerRules(), checkValidation, accountController.registerAccount);
 
-// Login page
-router.get(
-  '/login',
-  utilities.handleErrors(accountController.buildLogin)
-);
+// Protected route example
+router.get("/dashboard", checkJWTToken, (req, res) => {
+  res.render("account/dashboard", {
+    title: "Dashboard",
+    nav: req.nav,
+    user: req.user,
+    errors: null,
+  });
+});
 
-// Login form POST
-router.post(
-  '/login',
-  utilities.handleErrors(accountController.loginAccount)
-);
-
-// Registration page
-router.get(
-  '/register',
-  utilities.handleErrors(accountController.buildRegister)
-);
-
-// Registration form POST with validation
-router.post(
-  '/register',
-  regValidate.registrationRules(),
-  regValidate.checkRegData,
-  utilities.handleErrors(accountController.registerAccount)
-);
+router.get("/logout", accountController.logoutAccount);
 
 module.exports = router;

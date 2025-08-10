@@ -1,53 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Login</title>
-  <link rel="stylesheet" href="/css/forms.css" />
-  <%- include("../layouts/partials/head") %>
-</head>
-<body>
-  <%- include('../layouts/partials/header') %>
+<!-- views/account/login.ejs -->
+<%- include('../layouts/partials/head') %>
+<%- include('../layouts/partials/header') %> 
+<h1>Login</h1>
 
-  <h1>Login</h1>
+<% if (errors && errors.length > 0) { %>
+  <ul class="notice">
+    <% errors.forEach(function(error) { %>
+      <li><%= error.msg %></li>
+    <% }) %>
+  </ul>
+<% } %>
 
-  <% if (errors && errors.length > 0) { %>
-    <ul class="notice">
-      <% errors.forEach(function(error) { %>
-        <li><%= error.msg %></li>
-      <% }); %>
-    </ul>
-  <% } %>
+<form action="/account/login" method="POST">
+  <label for="email">Email:</label>
+  <input type="email" name="email" required />
 
-  <div class="form-wrapper">
-    <form class="form-container" method="post" action="/account/login" novalidate>
-      <label for="accountEmail">Email:</label>
-      <input
-        type="email"
-        id="accountEmail"
-        name="account_email"
-        required
-        value="<%= account_email || '' %>"
-      >
+  <label for="password">Password:</label>
+  <input type="password" name="password" required />
 
-      <label for="accountPassword">Password:</label>
-      <input
-        type="password"
-        id="accountPassword"
-        name="account_password"
-        required
-      >
-
-      <button type="submit">Login</button>
-    </form>
-
-    <div class="form-footer">
-      <p>Don't have an account? <a class="form-link" href="/account/register">Register here</a></p>
-      <p><a class="form-link" href="/account/reset-password">Forgot Password?</a></p>
-    </div>
-  </div>
-
-  <%- include('../layouts/partials/footer') %>
-</body>
-</html>
+  <button type="submit">Login</button>
+</form>
+<%- include('../layouts/partials/footer') %>
