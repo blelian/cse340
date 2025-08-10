@@ -4,15 +4,10 @@ const router = express.Router();
 const invController = require("../controllers/inventoryController");
 const utilities = require("../utilities");
 
-// Route: Base inventory page (e.g., list all or landing page)
+// Base inventory page (e.g., inventory home)
 router.get("/", async (req, res, next) => {
   try {
-    // Fetch navigation dynamically
     const nav = await utilities.getNav();
-
-    // Optionally, you could fetch inventory summary here if you want to list something
-    // For now, just render a simple inventory index page
-
     res.render("inventory/index", {
       title: "Inventory",
       nav,
@@ -23,10 +18,13 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-// Route: Display inventory by classification ID (renders a page)
+// Display inventory by classification ID (renders page with grid)
 router.get("/type/:classificationId", invController.buildByClassificationId);
 
-// Route: Provide inventory JSON data for a classification (for dropdowns or API)
+// Provide inventory JSON data for a classification (API or dropdown)
 router.get("/getInventory/:classification_id", invController.getInventoryJSON);
+
+// **Add route for inventory details page**
+router.get("/details/:inv_id", invController.buildByInventoryId);
 
 module.exports = router;

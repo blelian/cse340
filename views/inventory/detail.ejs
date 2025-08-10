@@ -1,62 +1,48 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <%- include('../layouts/partials/head') %>
-  <title><%= vehicle.inv_make %> <%= vehicle.inv_model %> | Vehicle Details</title>
-</head>
-<body>
-  <%- include('../layouts/partials/header') %>
+<main>
+  <div class="vehicle-detail-card">
+    <div class="vehicle-content-wrapper">
 
-  <main>
-    <div class="vehicle-detail-card">
-      
-      <div class="vehicle-content-wrapper">
-        <!-- Image Section with certification -->
-        <section class="vehicle-image-section">
-          <div class="certification-banner">
-            <span class="checkmark">✔</span>
-            <span>Certified Quality Vehicle</span>
-          </div>
-          <img src="<%= vehicle.inv_image %>" alt="Image of <%= vehicle.inv_make %> <%= vehicle.inv_model %>" />
-        </section>
+      <!-- Image Section with certification -->
+      <section class="vehicle-image-section">
+        <div class="certification-banner">
+          <span class="checkmark">✔</span>
+          <span>Certified Quality Vehicle</span>
+        </div>
+        <img src="<%= vehicle.inv_image %>" alt="Image of <%= vehicle.inv_make %> <%= vehicle.inv_model %>" />
+      </section>
 
-        <!-- Info Section -->
-        <section class="vehicle-info-section">
-          <h1 class="vehicle-title"><%= vehicle.inv_make %> <%= vehicle.inv_model %></h1>
+      <!-- Info Section -->
+      <section class="vehicle-info-section">
+        <h1 class="vehicle-title"><%= vehicle.inv_make %> <%= vehicle.inv_model %></h1>
 
-          <% 
-            const formattedPrice = new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD'
-            }).format(vehicle.inv_price);
+        <% 
+          const formattedPrice = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD'
+          }).format(vehicle.inv_price);
 
-            const formattedMiles = new Intl.NumberFormat('en-US').format(vehicle.inv_miles);
-          %>
+          const formattedMiles = new Intl.NumberFormat('en-US').format(vehicle.inv_miles);
+        %>
 
-          <div class="vehicle-price">Price: <strong><%= formattedPrice %></strong></div>
+        <div class="vehicle-price">Price: <strong><%= formattedPrice %></strong></div>
 
-          <div class="vehicle-description">
-            <h2>Why You'll Love This Vehicle</h2>
-            <p><%= vehicle.inv_description %></p>
-          </div>
+        <div class="vehicle-description">
+          <h2>Why You'll Love This Vehicle</h2>
+          <p><%= vehicle.inv_description %></p>
+        </div>
 
-          <div class="vehicle-details">
-            <div><strong>Year:</strong> <%= vehicle.inv_year %></div>
-            <div><strong>Miles:</strong> <%= formattedMiles %> miles</div>
-            <div><strong>Color:</strong> <%= vehicle.inv_color %></div>
-          </div>
-        </section>
-      </div>
-
-      <!-- Call to action below -->
-      <div class="call-to-action">
-        <p>Ready to own this incredible <%= vehicle.inv_make %> <%= vehicle.inv_model %>? Contact us now and drive it home today!</p>
-        <a href="/contact" class="btn-contact">Contact Sales</a>
-      </div>
-
+        <div class="vehicle-details">
+          <div><strong>Year:</strong> <%= vehicle.inv_year %></div>
+          <div><strong>Miles:</strong> <%= formattedMiles %> miles</div>
+          <div><strong>Color:</strong> <%= vehicle.inv_color %></div>
+        </div>
+      </section>
     </div>
-  </main>
 
-  <%- include('../layouts/partials/footer') %>
-</body>
-</html>
+    <!-- Call to action below -->
+    <div class="call-to-action">
+      <p>Ready to own this incredible <%= vehicle.inv_make %> <%= vehicle.inv_model %>? Contact us now and drive it home today!</p>
+      <a href="/contact" class="btn-contact">Contact Sales</a>
+    </div>
+  </div>
+</main>

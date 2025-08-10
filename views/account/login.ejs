@@ -1,29 +1,31 @@
 <!-- views/account/login.ejs -->
-<%- include('../layouts/partials/head') %>
-<%- include('../layouts/partials/header') %>
 
-<h1>Login</h1>
 
-<% if (errors && errors.length > 0) { %>
-  <ul class="notice">
-    <% errors.forEach(function(error) { %>
-      <li><%= error.msg %></li>
-    <% }) %>
-  </ul>
-<% } %>
+<main>
+  <div class="form-wrapper login-form-wrapper">
+    <h1>Login</h1>
 
-<% if (typeof message !== 'undefined' && message) { %>
-  <div class="alert alert-info"><%= message %></div>
-<% } %>
+    <% if (errors && errors.length > 0) { %>
+      <ul class="notice">
+        <% errors.forEach(function(error) { %>
+          <li><%= error.msg %></li>
+        <% }) %>
+      </ul>
+    <% } %>
 
-<form action="/account/login" method="POST">
-  <label for="email">Email:</label>
-  <input type="email" name="email" required />
+    <% if (typeof message !== 'undefined' && message) { %>
+      <div class="alert alert-info"><%= message %></div>
+    <% } %>
 
-  <label for="password">Password:</label>
-  <input type="password" name="password" required />
+    <form action="/account/login" method="POST" class="form-container">
+      <label for="email">Email:</label>
+      <input type="email" name="email" id="email" required />
 
-  <button type="submit">Login</button>
-</form>
+      <label for="password">Password:</label>
+      <input type="password" name="password" id="password" required />
 
-<%- include('../layouts/partials/footer') %>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</main>
+

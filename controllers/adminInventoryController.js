@@ -1,3 +1,4 @@
+// controllers/adminInventoryController.js
 const invModel = require("../models/inventoryModel");
 const utilities = require("../utilities");
 
@@ -5,7 +6,13 @@ async function listInventory(req, res, next) {
   try {
     const inventory = await invModel.getAllInventory();
     const nav = await utilities.getNav();
-    res.render("admin/inventory", { title: "Inventory Management", nav, inventory });
+    res.render("admin/inventory", {
+      title: "Inventory Management",
+      nav,
+      inventory,
+      isAdmin: true,
+      user: req.user, // pass user info if available
+    });
   } catch (error) {
     next(error);
   }
@@ -15,7 +22,14 @@ async function showAddForm(req, res, next) {
   try {
     const nav = await utilities.getNav();
     const classifications = await invModel.getClassifications();
-    res.render("admin/inventory/add", { title: "Add Inventory Item", nav, classifications, errors: null });
+    res.render("inventory/add_inventory", {  // Corrected path
+      title: "Add Inventory Item",
+      nav,
+      classifications,
+      errors: null,
+      isAdmin: true,
+      user: req.user,
+    });
   } catch (error) {
     next(error);
   }
@@ -39,15 +53,16 @@ async function addInventory(req, res, next) {
     if (!inv_make || !inv_model || !inv_price) {
       const nav = await utilities.getNav();
       const classifications = await invModel.getClassifications();
-      return res.status(400).render("admin/inventory/add", {
+      return res.status(400).render("inventory/add_inventory", {  // Corrected path
         title: "Add Inventory Item",
         nav,
         classifications,
         errors: [{ msg: "Please fill out required fields" }],
+        isAdmin: true,
+        user: req.user,
       });
     }
 
-    // Call model with positional arguments in correct order
     await invModel.addInventory(
       inv_make,
       inv_model,
@@ -76,7 +91,15 @@ async function showEditForm(req, res, next) {
     }
     const nav = await utilities.getNav();
     const classifications = await invModel.getClassifications();
-    res.render("admin/inventory/edit", { title: "Edit Inventory Item", nav, inventoryItem, classifications, errors: null });
+    res.render("inventory/edit-inventory", {  // Corrected path
+      title: "Edit Inventory Item",
+      nav,
+      inventoryItem,
+      classifications,
+      errors: null,
+      isAdmin: true,
+      user: req.user,
+    });
   } catch (error) {
     next(error);
   }
@@ -98,7 +121,6 @@ async function updateInventory(req, res, next) {
       classification_id,
     } = req.body;
 
-    // Call updateInventory with correct positional args, last one is inv_id
     await invModel.updateInventory(
       inv_make,
       inv_model,
@@ -129,6 +151,45 @@ async function deleteInventory(req, res, next) {
   }
 }
 
+// ===== Classification routes =====
+
+async function showAddClassificationForm(req, res, next) {
+  try {
+    const nav = await utilities.getNav();
+    res.render("inventory/add_classification", {  // Corrected path
+      title: "Add Classification",
+      nav,
+      errors: null,
+      isAdmin: true,
+      user: req.user,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function addClassification(req, res, next) {
+  try {
+    const { classification_name } = req.body;
+
+    if (!classification_name) {
+      const nav = await utilities.getNav();
+      return res.status(400).render("inventory/add_classification", {  // Corrected path
+        title: "Add Classification",
+        nav,
+        errors: [{ msg: "Classification name is required" }],
+        isAdmin: true,
+        user: req.user,
+      });
+    }
+
+    await invModel.addClassification(classification_name);
+    res.redirect("/admin/inventory");
+  } catch (error) {
+    next(error);
+  }
+}
+
 module.exports = {
   listInventory,
   showAddForm,
@@ -136,4 +197,6 @@ module.exports = {
   showEditForm,
   updateInventory,
   deleteInventory,
+  showAddClassificationForm,
+  addClassification,
 };

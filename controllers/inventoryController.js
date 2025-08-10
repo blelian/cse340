@@ -1,8 +1,8 @@
-// controllers/inventoryController.js 
+// controllers/inventoryController.js
 const invModel = require("../models/inventoryModel");
 const utilities = require("../utilities/");
 
-// Show inventory items filtered by classification ID, render classification view with grid
+// Show inventory filtered by classification ID, render classification view with grid
 async function buildByClassificationId(req, res, next) {
   const classification_id = parseInt(req.params.classificationId);
   try {
@@ -31,7 +31,33 @@ async function getInventoryJSON(req, res, next) {
   }
 }
 
+// New: Show vehicle details page by inventory ID
+async function buildByInventoryId(req, res, next) {
+  const inv_id = parseInt(req.params.inv_id);
+  try {
+    const vehicle = await invModel.getInventoryById(inv_id);
+    const nav = await utilities.getNav();
+
+    if (!vehicle) {
+      return res.status(404).render("errors/404", {
+        title: "Vehicle Not Found",
+        message: "No vehicle found with that ID.",
+        nav,
+      });
+    }
+
+    res.render("inventory/detail", {
+      title: `${vehicle.inv_make} ${vehicle.inv_model} Details`,
+      nav,
+      vehicle,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   buildByClassificationId,
   getInventoryJSON,
+  buildByInventoryId,
 };

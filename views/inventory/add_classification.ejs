@@ -1,26 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <%- include('../layouts/partials/head') %>
-  <link rel="stylesheet" href="/css/forms.css" /> <!-- Include your forms.css -->
-</head>
-<body>
-  <%- include('../layouts/partials/header') %>
+<main>
+  <h1>Add New Classification</h1>
 
-  <main>
-    <h1>Add New Classification</h1>
+  <%- messages() %> <!-- For flash messages -->
 
-    <%- messages() %> <!-- Flash messages here -->
-
-    <div class="form-wrapper">
-      <form class="form-container" action="/inventory/add-classification" method="post">
-        <label for="classification_name">Classification Name</label>
-        <input type="text" id="classification_name" name="classification_name" required maxlength="30" />
-        <button type="submit">Add Classification</button>
-      </form>
-    </div>
-  </main>
-
-  <%- include('../layouts/partials/footer') %>
-</body>
-</html>
+  <div class="form-wrapper">
+    <form class="form-container" action="/admin/inventory/add-classification" method="post">
+      <label for="classification_name">Classification Name</label>
+      <input type="text" id="classification_name" name="classification_name" required maxlength="30" />
+      <button type="submit">Add Classification</button>
+    </form>
+  </div>
+</main>

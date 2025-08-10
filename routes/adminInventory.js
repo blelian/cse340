@@ -1,3 +1,4 @@
+// routes/adminInventory.js
 const express = require("express");
 const router = express.Router();
 const { authenticateToken, requireAdmin } = require("../middleware/auth");
@@ -23,5 +24,9 @@ router.post("/edit/:id", adminInvController.updateInventory);
 
 // Delete inventory item
 router.post("/delete/:id", adminInvController.deleteInventory);
+
+// Add classification routes
+router.get("/add-classification", adminInvController.showAddClassificationForm);
+router.post("/add-classification", adminInvController.addClassification);
 
 module.exports = router;

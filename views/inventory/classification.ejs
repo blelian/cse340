@@ -1,22 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <%- include('../layouts/partials/head') %>
-  
-</head>
-<body>
-  <%- include('../layouts/partials/header') %>
-
-  <main class="full-width">
-    <% if (title) { %>
-      <h1><%= title %></h1>
-      <%# messages() %>
-      <%- grid %>
-    <% } else { %>
-      <p>Classification not found. <a href="/">Return home</a></p>
-    <% } %>
-  </main>
-
-  <%- include('../layouts/partials/footer') %>
-</body>
-</html>
+<main class="full-width">
+  <% if (title) { %>
+    <h1><%= title %></h1>
+    <%- grid %> <!-- grid HTML injected from utilities -->
+  <% } else { %>
+    <p>Classification not found. <a href="/">Return home</a></p>
+  <% } %>
+</main>
