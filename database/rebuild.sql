@@ -4,8 +4,8 @@ DROP TABLE IF EXISTS classification CASCADE;
 DROP TABLE IF EXISTS account CASCADE;
 DROP TYPE IF EXISTS account_type CASCADE;
 
--- Create ENUM
-CREATE TYPE account_type AS ENUM ('Client', 'Employee', 'Admin');
+-- Create ENUM (all lowercase to match code roles)
+CREATE TYPE account_type AS ENUM ('client', 'employee', 'admin');
 
 -- Create Tables
 CREATE TABLE account (
@@ -14,7 +14,7 @@ CREATE TABLE account (
   account_lastname VARCHAR(255) NOT NULL,
   account_email VARCHAR(255) UNIQUE NOT NULL,
   account_password VARCHAR(255) NOT NULL,
-  account_type account_type DEFAULT 'Client'
+  account_type account_type DEFAULT 'client'
 );
 
 CREATE TABLE classification (
@@ -68,13 +68,13 @@ INSERT INTO inventory (
 ('Chevy', 'Camaro', 'Modern muscle car', '/images/vehicles/camaro.jpg', '/images/vehicles/camaro-tn.jpg', 33000.00, 2020, 30000, 'Red', 5),
 ('T', 'Model', 'Early Ford model', '/images/vehicles/model-t.jpg', '/images/vehicles/model-t-tn.jpg', 8000.00, 1925, 250000, 'Black', 5);
 
--- Sample Accounts (with bcrypt hashed passwords)
+-- Sample Accounts (replace hashed_password_xxx with actual bcrypt hashes)
 INSERT INTO account (
   account_firstname, account_lastname, account_email, account_password, account_type
 ) VALUES
-('John', 'Sibanda', 'johnsibanda@gmail.com', 'hashed_password_123', 'Client'),
-('Jane', 'Smith', 'janesmith@gmail.com', 'hashed_password_456', 'Admin'),
+('John', 'Sibanda', 'johnsibanda@gmail.com', 'hashed_password_123', 'client'),
+('Jane', 'Smith', 'janesmith@gmail.com', 'hashed_password_456', 'admin'),
 
-('Basic', 'Client', 'basic@340.edu', '$2b$10$b6UkmKz1AeMCQb350rIH8.zoucxYjG0wQ27W73Zk45XTjbfVrh9VG', 'Client'),
-('Happy', 'Employee', 'happy@340.edu', '$2b$10$69YDAyJ7vvOQDZzbPcSX7.Ix7U7kZNiW7NglWaaDgdx9bfWf8hw1S', 'Employee'),
-('Manager', 'User', 'manager@340.edu', '$2b$10$OP0Xdb/ThQ7wnXKhGnJBbucsf3xZ9HDh4o2lJFyPF3w48Poki3fry', 'Admin');
+('Basic', 'Client', 'basic@340.edu', '$2b$10$b6UkmKz1AeMCQb350rIH8.zoucxYjG0wQ27W73Zk45XTjbfVrh9VG', 'client'),
+('Happy', 'Employee', 'happy@340.edu', '$2b$10$69YDAyJ7vvOQDZzbPcSX7.Ix7U7kZNiW7NglWaaDgdx9bfWf8hw1S', 'employee'),
+('Manager', 'User', 'manager@340.edu', '$2b$10$OP0Xdb/ThQ7wnXKhGnJBbucsf3xZ9HDh4o2lJFyPF3w48Poki3fry', 'admin');

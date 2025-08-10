@@ -19,10 +19,11 @@ async function registerAccount(req, res, next) {
     const { first_name, last_name, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Default account_type to 'user' on registration
     await pool.query(
-      `INSERT INTO account (first_name, last_name, email, password)
-       VALUES ($1, $2, $3, $4)`,
-      [first_name, last_name, email, hashedPassword]
+      `INSERT INTO account (account_firstname, account_lastname, account_email, account_password, account_type)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [first_name, last_name, email, hashedPassword, "user"]
     );
 
     res.redirect("/account/login");
@@ -34,7 +35,12 @@ async function registerAccount(req, res, next) {
 async function loginAccount(req, res, next) {
   try {
     const { email, password } = req.body;
-    const result = await pool.query("SELECT * FROM account WHERE email = $1", [email]);
+
+    const result = await pool.query(
+      "SELECT * FROM account WHERE account_email = $1",
+      [email]
+    );
+
     if (result.rowCount === 0) {
       return res.status(400).render("account/login", {
         title: "Login",
@@ -44,7 +50,8 @@ async function loginAccount(req, res, next) {
     }
 
     const account = result.rows[0];
-    const validPassword = await bcrypt.compare(password, account.password);
+    const validPassword = await bcrypt.compare(password, account.account_password);
+
     if (!validPassword) {
       return res.status(400).render("account/login", {
         title: "Login",
@@ -53,14 +60,25 @@ async function loginAccount(req, res, next) {
       });
     }
 
+    // Sign JWT with role info included (account_type)
     const token = jwt.sign(
-      { account_id: account.account_id, email: account.email },
-      process.env.ACCESS_TOKEN_SECRET,
+      {
+        account_id: account.account_id,
+        email: account.account_email,
+        role: account.account_type, // use "role" key for clarity
+      },
+      process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
     res.cookie("jwt", token, { httpOnly: true });
-    res.redirect("/");
+
+    // Redirect based on role
+    if (account.account_type && account.account_type.toLowerCase() === "admin") {
+      return res.redirect("/admin/dashboard");
+    } else {
+      return res.redirect("/");
+    }
   } catch (error) {
     next(error);
   }
@@ -71,4 +89,10 @@ function logoutAccount(req, res) {
   res.redirect("/");
 }
 
-module.exports = { buildLogin, buildRegister, registerAccount, loginAccount, logoutAccount };
+module.exports = {
+  buildLogin,
+  buildRegister,
+  registerAccount,
+  loginAccount,
+  logoutAccount,
+};

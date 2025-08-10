@@ -2,16 +2,14 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const isProduction = process.env.NODE_ENV === 'production';
+const env = process.env.NODE_ENV || 'development';
 
-// Use different connection strings for production and test/dev
-const connectionString = isProduction
-  ? process.env.DATABASE_URL
-  : process.env.DATABASE_URL_LOCAL || process.env.DATABASE_URL; // fallback to DATABASE_URL if DATABASE_URL_LOCAL not set
+// Enable SSL for production and test environments
+const useSSL = env === 'production' || env === 'test';
 
 const pool = new Pool({
-  connectionString,
-  ssl: isProduction ? { rejectUnauthorized: false } : false,
+  connectionString: process.env.DATABASE_URL,
+  ssl: useSSL ? { rejectUnauthorized: false } : false,
 });
 
 module.exports = pool;
