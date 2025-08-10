@@ -1,4 +1,4 @@
-// controllers/inventoryController.js
+// controllers/inventoryController.js 
 const invModel = require("../models/inventoryModel");
 const utilities = require("../utilities/");
 

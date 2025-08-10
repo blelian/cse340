@@ -6,7 +6,6 @@ const cookieParser = require("cookie-parser");
 const expressLayouts = require("express-ejs-layouts");
 
 const app = express();
-const PORT = process.env.PORT || 5500;
 
 // Middleware
 app.use(bodyParser.json());
@@ -57,10 +56,6 @@ app.use((err, req, res, next) => {
     nav: [],
     errors: null,
   });
-});
-
-app.listen(PORT, () => {
-  console.log(`App is running on http://localhost:${PORT}`);
 });
 
 module.exports = app;
