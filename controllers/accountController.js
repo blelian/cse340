@@ -1,4 +1,3 @@
-// controllers/accountController.js
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const utils = require("../utilities/");
@@ -6,7 +5,8 @@ const pool = require("../database/");
 
 async function buildLogin(req, res) {
   const nav = await utils.getNav();
-  res.render("account/login", { title: "Login", nav, errors: null });
+  const message = req.query.message; // get message from query string
+  res.render("account/login", { title: "Login", nav, errors: null, message });
 }
 
 async function buildRegister(req, res) {

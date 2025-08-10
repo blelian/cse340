@@ -1,6 +1,7 @@
 <!-- views/account/login.ejs -->
 <%- include('../layouts/partials/head') %>
-<%- include('../layouts/partials/header') %> 
+<%- include('../layouts/partials/header') %>
+
 <h1>Login</h1>
 
 <% if (errors && errors.length > 0) { %>
@@ -9,6 +10,10 @@
       <li><%= error.msg %></li>
     <% }) %>
   </ul>
+<% } %>
+
+<% if (typeof message !== 'undefined' && message) { %>
+  <div class="alert alert-info"><%= message %></div>
 <% } %>
 
 <form action="/account/login" method="POST">
@@ -20,4 +25,5 @@
 
   <button type="submit">Login</button>
 </form>
+
 <%- include('../layouts/partials/footer') %>
