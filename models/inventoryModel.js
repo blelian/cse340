@@ -1,6 +1,7 @@
 // models/inventoryModel.js
 const pool = require('../database');
 
+// Get all inventory items for a specific classification
 async function getInventoryByClassificationId(classificationId) {
   const sql = `
     SELECT inv.*, cls.classification_name
@@ -13,6 +14,7 @@ async function getInventoryByClassificationId(classificationId) {
   return result.rows;
 }
 
+// Get all inventory items
 async function getAllInventory() {
   const sql = `
     SELECT inv.*, cls.classification_name
@@ -24,18 +26,21 @@ async function getAllInventory() {
   return result.rows;
 }
 
+// Get all classifications
 async function getClassifications() {
   const sql = "SELECT * FROM classification ORDER BY classification_name";
   const result = await pool.query(sql);
   return result.rows;
 }
 
+// Add a new classification
 async function addClassification(classification_name) {
   const sql = "INSERT INTO classification (classification_name) VALUES ($1) RETURNING *";
   const result = await pool.query(sql, [classification_name]);
   return result.rows[0];
 }
 
+// Add a new inventory item
 async function addInventory(inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id) {
   const sql = `
     INSERT INTO inventory
@@ -49,6 +54,7 @@ async function addInventory(inv_make, inv_model, inv_year, inv_description, inv_
   return result.rows[0];
 }
 
+// Get inventory item by ID
 async function getInventoryById(inv_id) {
   const sql = `
     SELECT *
@@ -59,6 +65,7 @@ async function getInventoryById(inv_id) {
   return result.rows[0];
 }
 
+// Update an inventory item by ID
 async function updateInventory(inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color, classification_id, inv_id) {
   const sql = `
     UPDATE inventory
@@ -81,6 +88,7 @@ async function updateInventory(inv_make, inv_model, inv_year, inv_description, i
   return result.rows[0];
 }
 
+// Delete an inventory item by ID
 async function deleteInventory(inv_id) {
   const sql = `
     DELETE FROM inventory

@@ -1,0 +1,46 @@
+<%- include('../layouts/partials/head', { title }) %>
+<%- include('../layouts/partials/header') %>
+
+<h1><%= title %></h1>
+
+<form action="/admin/inventory/add" method="POST">
+  <label for="classification_id">Classification</label>
+  <select name="classification_id" id="classification_id" required>
+    <option value="">-- Select Classification --</option>
+    <% classifications.forEach(c => { %>
+      <option value="<%= c.classification_id %>"><%= c.classification_name %></option>
+    <% }) %>
+  </select>
+
+  <label for="inv_make">Make</label>
+  <input type="text" name="inv_make" id="inv_make" required>
+
+  <label for="inv_model">Model</label>
+  <input type="text" name="inv_model" id="inv_model" required>
+
+  <label for="inv_year">Year</label>
+  <input type="number" name="inv_year" id="inv_year" required>
+
+  <label for="inv_description">Description</label>
+  <textarea name="inv_description" id="inv_description" required></textarea>
+
+  <label for="inv_image">Image Path</label>
+  <input type="text" name="inv_image" id="inv_image" required>
+
+  <label for="inv_thumbnail">Thumbnail Path</label>
+  <input type="text" name="inv_thumbnail" id="inv_thumbnail" required>
+
+  <label for="inv_price">Price</label>
+  <input type="number" step="0.01" name="inv_price" id="inv_price" required>
+
+  <label for="inv_miles">Miles</label>
+  <input type="number" name="inv_miles" id="inv_miles" required>
+
+  <label for="inv_color">Color</label>
+  <input type="text" name="inv_color" id="inv_color" required>
+
+  <button type="submit">Add Inventory Item</button>
+</form>
+
+<%- include('../layouts/partials/footer') %>
+<%- include('../layouts/partials/footer') %>

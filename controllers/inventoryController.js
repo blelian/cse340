@@ -2,6 +2,7 @@
 const invModel = require("../models/inventoryModel");
 const utilities = require("../utilities/");
 
+// Show inventory items filtered by classification ID, render classification view with grid
 async function buildByClassificationId(req, res, next) {
   const classification_id = parseInt(req.params.classificationId);
   try {
@@ -9,8 +10,8 @@ async function buildByClassificationId(req, res, next) {
     const nav = await utilities.getNav();
     const grid = await utilities.buildClassificationGrid(data);
 
-    res.render("./inventory/classification", {
-      title: data.length > 0 ? data[0].classification_name + " vehicles" : "No vehicles found",
+    res.render("inventory/classification", {
+      title: data.length > 0 ? `${data[0].classification_name} vehicles` : "No vehicles found",
       nav,
       grid,
     });
@@ -19,7 +20,7 @@ async function buildByClassificationId(req, res, next) {
   }
 }
 
-// JSON endpoint for dropdown fetch
+// JSON endpoint to fetch inventory by classification (for dropdown or API)
 async function getInventoryJSON(req, res, next) {
   const classification_id = parseInt(req.params.classification_id);
   try {
@@ -32,5 +33,5 @@ async function getInventoryJSON(req, res, next) {
 
 module.exports = {
   buildByClassificationId,
-  getInventoryJSON
+  getInventoryJSON,
 };
