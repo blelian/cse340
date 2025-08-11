@@ -19,11 +19,11 @@ utilities.buildClassificationGrid = async function (data) {
       }).format(vehicle.inv_price);
 
       grid += '<li>';
-      grid += `<a href="/inventory/detail/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model} details">`;
+      grid += `<a href="/inventory/details/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model} details">`;
       grid += `<img src="${vehicle.inv_thumbnail}" alt="Image of ${vehicle.inv_make} ${vehicle.inv_model} on CSE Motors" /></a>`;
       grid += '<div class="namePrice">';
       grid += '<hr />';
-      grid += `<h2><a href="/inventory/detail/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model} details">`;
+      grid += `<h2><a href="/inventory/details/${vehicle.inv_id}" title="View ${vehicle.inv_make} ${vehicle.inv_model} details">`;
       grid += `${vehicle.inv_make} ${vehicle.inv_model}</a></h2>`;
       grid += `<span>${formattedPrice}</span>`;
       grid += '</div>';
