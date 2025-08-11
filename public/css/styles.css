@@ -295,3 +295,11 @@ footer .error-link:focus {
   outline: none;
   text-decoration: none;
 }
+/* Target your inventory table */
+.styled-table {
+  margin-left: auto;
+  margin-right: auto;
+  /* Optional: set max-width so it doesn't stretch too far */
+  max-width: 90%;
+  width: 100%;
+}

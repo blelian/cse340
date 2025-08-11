@@ -1,0 +1,21 @@
+
+<h1><%= title %></h1>
+
+<form action="/admin/employees/edit/<%= employeeId %>" method="POST">
+  <label for="first_name">First Name</label>
+  <input type="text" name="first_name" value="<%= user.account_firstname %>" required>
+
+  <label for="last_name">Last Name</label>
+  <input type="text" name="last_name" value="<%= user.account_lastname %>" required>
+
+  <label for="email">Email</label>
+  <input type="email" name="email" value="<%= user.account_email %>" required>
+
+  <label for="account_type">Account Type</label>
+  <select name="account_type" required>
+    <option value="admin" <%= user.account_type === 'admin' ? 'selected' : '' %>>Admin</option>
+    <option value="employee" <%= user.account_type === 'employee' ? 'selected' : '' %>>Employee</option>
+  </select>
+
+  <button type="submit">Update Employee</button>
+</form>

@@ -1,53 +1,52 @@
-<%- include('../layouts/partials/head') %>
-<%- include('../layouts/partials/header') %>
 
-<h1>Inventory Management</h1>
+<h1><%= title %></h1>
 
 <div class="form-wrapper">
-  <div class="form-container">
+  <form method="GET" action="/admin/inventory">
     <label for="classification_id">Select Classification</label>
-    <form id="classificationForm" method="GET" action="/inv/management">
-      <select id="classification_id" name="classification_id" class="styled-dropdown" onchange="this.form.submit()">
-        <% classifications.forEach(classification => { %>
-          <option value="<%= classification.classification_id %>" 
-            <% if (classification.classification_id === selectedClassificationId) { %> selected <% } %>>
-            <%= classification.classification_name %>
-          </option>
-        <% }) %>
-      </select>
-    </form>
-  </div>
+    <select id="classification_id" name="classification_id" class="styled-dropdown" onchange="this.form.submit()">
+      <option value="">All Classifications</option>
+      <% classifications.forEach(classification => { %>
+        <option value="<%= classification.classification_id %>" <%= classification.classification_id === selectedClassificationId ? "selected" : "" %>>
+          <%= classification.classification_name %>
+        </option>
+      <% }) %>
+    </select>
+  </form>
 
-  <table id="inventoryDisplay">
+  <table id="inventoryDisplay" class="styled-table">
     <thead>
       <tr>
         <th>Make</th>
         <th>Model</th>
         <th>Year</th>
         <th>Price</th>
-        <th>Modify</th>
+        <th>Classification</th>
+        <th>Edit</th>
         <th>Delete</th>
       </tr>
     </thead>
     <tbody>
-      <% if (inventory && inventory.length > 0) { %>
+      <% if (inventory.length > 0) { %>
         <% inventory.forEach(vehicle => { %>
           <tr>
             <td><%= vehicle.inv_make %></td>
             <td><%= vehicle.inv_model %></td>
             <td><%= vehicle.inv_year %></td>
             <td>$<%= vehicle.inv_price.toLocaleString() %></td>
-            <td><a href="/inv/edit/<%= vehicle.inv_id %>">Edit</a></td>
-            <td><a href="/inv/delete/<%= vehicle.inv_id %>">Delete</a></td>
+            <td><%= vehicle.classification_name %></td>
+            <td><a href="/admin/inventory/edit/<%= vehicle.inv_id %>">Edit</a></td>
+            <td>
+              <form action="/admin/inventory/delete/<%= vehicle.inv_id %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this vehicle?');">
+                <button type="submit" class="delete-button">Delete</button>
+              </form>
+            </td>
           </tr>
         <% }) %>
       <% } else { %>
-        <tr>
-          <td colspan="6">No vehicles found for this classification.</td>
-        </tr>
+        <tr><td colspan="7">No inventory items found.</td></tr>
       <% } %>
     </tbody>
   </table>
 </div>
 
-<%- include('../layouts/partials/footer') %>

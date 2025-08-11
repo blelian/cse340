@@ -1,0 +1,37 @@
+<% /* Content only; layout.ejs wraps this */ %>
+
+<h1><%= title %></h1>
+
+<table class="inventory-table">
+  <thead>
+    <tr>
+      <th>Make</th>
+      <th>Model</th>
+      <th>Year</th>
+      <th>Price</th>
+      <th>Classification</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (inventory.length === 0) { %>
+      <tr><td colspan="6">No inventory items found.</td></tr>
+    <% } else { %>
+      <% inventory.forEach(item => { %>
+        <tr>
+          <td><%= item.inv_make %></td>
+          <td><%= item.inv_model %></td>
+          <td><%= item.inv_year %></td>
+          <td>$<%= item.inv_price.toLocaleString() %></td>
+          <td><%= item.classification_name %></td>
+          <td>
+            <a href="/admin/inventory/edit/<%= item.inv_id %>">Edit</a> |
+            <form action="/admin/inventory/delete/<%= item.inv_id %>" method="POST" class="inline-form">
+              <button type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    <% } %>
+  </tbody>
+</table>

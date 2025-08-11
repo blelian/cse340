@@ -1,0 +1,42 @@
+
+<h1><%= title %></h1>
+
+<form action="/admin/inventory/edit/<%= inventoryItem.inv_id %>" method="POST" class="form-container">
+  <label for="classification_id">Classification</label>
+  <select name="classification_id" required>
+    <% classifications.forEach(classification => { %>
+      <option value="<%= classification.classification_id %>" <%= classification.classification_id === inventoryItem.classification_id ? 'selected' : '' %>>
+        <%= classification.classification_name %>
+      </option>
+    <% }); %>
+  </select>
+
+  <label for="inv_make">Make</label>
+  <input type="text" name="inv_make" value="<%= inventoryItem.inv_make %>" required>
+
+  <label for="inv_model">Model</label>
+  <input type="text" name="inv_model" value="<%= inventoryItem.inv_model %>" required>
+
+  <label for="inv_year">Year</label>
+  <input type="number" name="inv_year" value="<%= inventoryItem.inv_year %>" required>
+
+  <label for="inv_description">Description</label>
+  <textarea name="inv_description" required><%= inventoryItem.inv_description %></textarea>
+
+  <label for="inv_image">Image Path</label>
+  <input type="text" name="inv_image" value="<%= inventoryItem.inv_image %>" required>
+
+  <label for="inv_thumbnail">Thumbnail Path</label>
+  <input type="text" name="inv_thumbnail" value="<%= inventoryItem.inv_thumbnail %>" required>
+
+  <label for="inv_price">Price</label>
+  <input type="number" step="0.01" name="inv_price" value="<%= inventoryItem.inv_price %>" required>
+
+  <label for="inv_miles">Miles</label>
+  <input type="number" name="inv_miles" value="<%= inventoryItem.inv_miles %>" required>
+
+  <label for="inv_color">Color</label>
+  <input type="text" name="inv_color" value="<%= inventoryItem.inv_color %>" required>
+
+  <button type="submit">Update Inventory Item</button>
+</form>

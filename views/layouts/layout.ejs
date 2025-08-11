@@ -1,16 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-<%- include('./partials/head') %>
+    <!DOCTYPE html>
+    <html lang="en">
+    <%- include('./partials/head') %> <!-- Head section with meta tags, etc. -->
 
-<body>
+    <body>
     <div id="wrapper">
-        <%- include('./partials/header') %>
+        <%- include('./partials/header', { useFormsCSS: useFormsCSS }) %>
         <main>
-            <%- body %>
+        <%- body %>
+        <!-- debug output -->
         </main>
         <%- include('./partials/footer') %>
     </div>
-    <script src="/js/nav-toggle.js"></script>
+        <script src="/js/nav-toggle.js"></script>
 
-</body>
-</html>
+    </body>
+
+    </html>

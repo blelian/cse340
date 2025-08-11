@@ -17,17 +17,17 @@ app.use(cookieParser());
 // Session middleware (required for flash messages)
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "your_secret_key_here", // Use env var in production
+    secret: process.env.SESSION_SECRET || "your_secret_key_here",
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 60000 }, // optional session expiration (ms)
+    cookie: { maxAge: 600000 }, // 10 minutes
   })
 );
 
 // Flash middleware
 app.use(flash());
 
-// Middleware to expose flash messages function to views
+// Middleware to expose flash messages and useFormsCSS flag globally
 app.use((req, res, next) => {
   res.locals.messages = () => {
     const flashes = req.flash();
@@ -39,6 +39,12 @@ app.use((req, res, next) => {
     }
     return html;
   };
+
+  // Default to false if route didn’t explicitly set this flag
+  if (typeof res.locals.useFormsCSS === "undefined") {
+    res.locals.useFormsCSS = false;
+  }
+
   next();
 });
 
@@ -69,8 +75,8 @@ app.use("/account", accountRoutes);
 app.use("/inventory", inventoryRoutes);
 
 // Admin routes
-app.use("/admin", adminRoutes); // dashboard, user management
-app.use("/admin/inventory", adminInventoryRoutes); // inventory management
+app.use("/admin", adminRoutes);
+app.use("/admin/inventory", adminInventoryRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

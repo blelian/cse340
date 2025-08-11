@@ -1,4 +1,3 @@
-// controllers/inventoryController.js
 const invModel = require("../models/inventoryModel");
 const utilities = require("../utilities/");
 
@@ -31,7 +30,7 @@ async function getInventoryJSON(req, res, next) {
   }
 }
 
-// New: Show vehicle details page by inventory ID
+// Show vehicle details page by inventory ID
 async function buildByInventoryId(req, res, next) {
   const inv_id = parseInt(req.params.inv_id);
   try {

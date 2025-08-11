@@ -73,9 +73,9 @@ async function loginAccount(req, res, next) {
 
     res.cookie("jwt", token, { httpOnly: true });
 
-    // Redirect based on role
+    // Redirect based on role - **MODIFIED HERE**
     if (account.account_type && account.account_type.toLowerCase() === "admin") {
-      return res.redirect("/admin/dashboard");
+      return res.redirect("/admin");  // changed from /admin/dashboard
     } else {
       return res.redirect("/");
     }

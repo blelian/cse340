@@ -1,0 +1,29 @@
+<h1><%= title %></h1>
+
+<table class="employee-table">
+  <thead>
+    <tr>
+      <th>First Name</th>
+      <th>Last Name</th>
+      <th>Email</th>
+      <th>Account Type</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% users.forEach(user => { %>
+      <tr>
+        <td><%= user.account_firstname %></td>
+        <td><%= user.account_lastname %></td>
+        <td><%= user.account_email %></td>
+        <td><%= user.account_type %></td>
+        <td>
+          <a href="/admin/employees/edit/<%= user.account_id %>">Edit</a> |
+          <form action="/admin/employees/delete/<%= user.account_id %>" method="POST" style="display:inline;">
+            <button type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>

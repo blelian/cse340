@@ -2,31 +2,31 @@
 const express = require("express");
 const router = express.Router();
 const { authenticateToken, requireAdmin } = require("../middleware/auth");
-const adminInvController = require("../controllers/adminInventoryController");
+const adminInventoryController = require("../controllers/adminInventoryController");
 
 // Protect all admin inventory routes
 router.use(authenticateToken, requireAdmin);
 
-// List inventory items
-router.get("/", adminInvController.listInventory);
+// Inventory management list page
+router.get("/", adminInventoryController.listInventory);
 
-// Show add inventory form
-router.get("/add", adminInvController.showAddForm);
+// Add inventory page
+router.get("/add", adminInventoryController.showAddForm);
 
-// Process add inventory form
-router.post("/add", adminInvController.addInventory);
+// Handle add inventory POST
+router.post("/add", adminInventoryController.handleAdd);
 
-// Show edit inventory form
-router.get("/edit/:id", adminInvController.showEditForm);
+// Edit inventory page
+router.get("/edit/:id", adminInventoryController.showEditForm);
 
-// Process edit inventory form
-router.post("/edit/:id", adminInvController.updateInventory);
+// Handle edit inventory POST
+router.post("/edit/:id", adminInventoryController.handleEdit);
 
-// Delete inventory item
-router.post("/delete/:id", adminInvController.deleteInventory);
+// Handle delete inventory POST
+router.post("/delete/:id", adminInventoryController.handleDelete);
 
-// Add classification routes
-router.get("/add-classification", adminInvController.showAddClassificationForm);
-router.post("/add-classification", adminInvController.addClassification);
+// Classification routes
+router.get("/add-classification", adminInventoryController.showAddClassificationForm);
+router.post("/add-classification", adminInventoryController.handleAddClassification);
 
 module.exports = router;

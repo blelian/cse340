@@ -1,24 +1,19 @@
-<%- include('../layouts/partials/head', { title: 'Admin Dashboard' }) %>
-<%- include('../layouts/partials/header') %>
 
 <main class="admin-dashboard">
-  <h1>Admin Dashboard</h1>
-  
+  <h1><%= title %></h1>
+
   <p>Welcome to the Admin Dashboard</p>
-  
+
   <% if (user) { %>
     <p>Welcome, <%= user.account_firstname %> <%= user.account_lastname %>!</p>
   <% } %>
 
   <nav>
     <ul>
-      <li><a href="/admin/users">Manage Users</a></li>
+      <li><a href="/admin/employees">Manage Employees</a></li>
       <li><a href="/admin/inventory">Manage Inventory</a></li>
       <li><a href="/admin/inventory/add">Add Vehicle</a></li>
       <li><a href="/admin/inventory/add-classification">Add Classification</a></li>
-      <li><a href="/admin/orders">View Orders</a></li>
     </ul>
   </nav>
 </main>
-
-<%- include('../layouts/partials/footer') %>
