@@ -1,4 +1,3 @@
-// controllers/adminInventoryController.js
 const pool = require("../database");
 const utilities = require("../utilities");
 
@@ -6,10 +5,14 @@ async function listInventory(req, res, next) {
   try {
     const nav = await utilities.getNav();
 
-    const classificationResult = await pool.query("SELECT * FROM classification ORDER BY classification_name");
+    const classificationResult = await pool.query(
+      "SELECT * FROM classification ORDER BY classification_name"
+    );
     const classifications = classificationResult.rows;
 
-    const selectedClassificationId = req.query.classification_id ? parseInt(req.query.classification_id) : null;
+    const selectedClassificationId = req.query.classification_id
+      ? parseInt(req.query.classification_id)
+      : null;
 
     let inventoryResult;
     if (selectedClassificationId) {
@@ -47,7 +50,9 @@ async function listInventory(req, res, next) {
 async function showAddForm(req, res, next) {
   try {
     const nav = await utilities.getNav();
-    const classificationResult = await pool.query("SELECT * FROM classification ORDER BY classification_name");
+    const classificationResult = await pool.query(
+      "SELECT * FROM classification ORDER BY classification_name"
+    );
     const classifications = classificationResult.rows;
 
     res.render("admin/add-inventory", {
@@ -106,20 +111,26 @@ async function showEditForm(req, res, next) {
     const { id } = req.params;
     const nav = await utilities.getNav();
 
-    const classificationResult = await pool.query("SELECT * FROM classification ORDER BY classification_name");
+    const classificationResult = await pool.query(
+      "SELECT * FROM classification ORDER BY classification_name"
+    );
     const classifications = classificationResult.rows;
 
-    const invResult = await pool.query("SELECT * FROM inventory WHERE inv_id = $1", [id]);
+    const invResult = await pool.query(
+      "SELECT * FROM inventory WHERE inv_id = $1",
+      [id]
+    );
     if (invResult.rowCount === 0) {
       return res.status(404).send("Inventory item not found");
     }
-    const vehicle = invResult.rows[0];
+    const inventoryItem = invResult.rows[0];
 
-    res.render("admin/edit-inventory", {
-      title: `Edit Inventory Item: ${vehicle.inv_make} ${vehicle.inv_model}`,
+    // ✅ Changed to match your actual file path and variable names in edit.ejs
+    res.render("admin/inventory/edit", {
+      title: `Edit Inventory Item: ${inventoryItem.inv_make} ${inventoryItem.inv_model}`,
       nav,
       classifications,
-      vehicle,
+      inventoryItem,
       user: req.user,
       useFormsCSS: true,
     });
@@ -188,7 +199,6 @@ async function handleDelete(req, res, next) {
   }
 }
 
-// New: Show the Add Classification form
 async function showAddClassificationForm(req, res, next) {
   try {
     const nav = await utilities.getNav();
@@ -203,7 +213,6 @@ async function showAddClassificationForm(req, res, next) {
   }
 }
 
-// New: Handle Add Classification POST
 async function handleAddClassification(req, res, next) {
   try {
     const { classification_name } = req.body;
@@ -213,7 +222,8 @@ async function handleAddClassification(req, res, next) {
       return res.redirect("/admin/inventory/add-classification");
     }
 
-    const sql = "INSERT INTO classification (classification_name) VALUES ($1)";
+    const sql =
+      "INSERT INTO classification (classification_name) VALUES ($1)";
     await pool.query(sql, [classification_name]);
 
     req.flash("success", "Classification added successfully.");
@@ -230,7 +240,6 @@ module.exports = {
   showEditForm,
   handleEdit,
   handleDelete,
-
   showAddClassificationForm,
   handleAddClassification,
 };
