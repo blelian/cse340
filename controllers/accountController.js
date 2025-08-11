@@ -3,35 +3,60 @@ const jwt = require("jsonwebtoken");
 const utils = require("../utilities/");
 const pool = require("../database/");
 
+// Show login form
 async function buildLogin(req, res) {
   const nav = await utils.getNav();
-  const message = req.query.message; // get message from query string
+  const message = req.query.message;
   res.render("account/login", { title: "Login", nav, errors: null, message });
 }
 
+// Show register form - pass empty values for form fields initially
 async function buildRegister(req, res) {
   const nav = await utils.getNav();
-  res.render("account/register", { title: "Register", nav, errors: null });
+  res.render("account/register", {
+    title: "Register",
+    nav,
+    errors: null,
+    first_name: '',
+    last_name: '',
+    email: '',
+  });
 }
 
+// Handle registration POST
 async function registerAccount(req, res, next) {
   try {
     const { first_name, last_name, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Default account_type to 'user' on registration
     await pool.query(
       `INSERT INTO account (account_firstname, account_lastname, account_email, account_password, account_type)
        VALUES ($1, $2, $3, $4, $5)`,
-      [first_name, last_name, email, hashedPassword, "user"]
+      [first_name, last_name, email, hashedPassword, "client"] // use "client" to match your enum
     );
 
     res.redirect("/account/login");
   } catch (error) {
+    const nav = await utils.getNav();
+
+    // If error has validation errors, re-render with user input and errors
+    if (error.errors) {
+      return res.status(400).render("account/register", {
+        title: "Register",
+        nav,
+        errors: error.errors,
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+      });
+    }
+
+    // For other errors, just pass along
     next(error);
   }
 }
 
+// Handle login POST
 async function loginAccount(req, res, next) {
   try {
     const { email, password } = req.body;
@@ -60,22 +85,25 @@ async function loginAccount(req, res, next) {
       });
     }
 
-    // Sign JWT with role info included (account_type)
     const token = jwt.sign(
       {
         account_id: account.account_id,
         email: account.account_email,
-        role: account.account_type, // use "role" key for clarity
+        role: account.account_type,
       },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    res.cookie("jwt", token, { httpOnly: true });
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 1000 * 60 * 60, // 1 hour
+    });
 
-    // Redirect based on role - **MODIFIED HERE**
     if (account.account_type && account.account_type.toLowerCase() === "admin") {
-      return res.redirect("/admin");  // changed from /admin/dashboard
+      return res.redirect("/admin");
     } else {
       return res.redirect("/");
     }
@@ -84,6 +112,7 @@ async function loginAccount(req, res, next) {
   }
 }
 
+// Handle logout
 function logoutAccount(req, res) {
   res.clearCookie("jwt");
   res.redirect("/");

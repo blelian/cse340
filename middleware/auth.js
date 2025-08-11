@@ -1,8 +1,8 @@
 const jwt = require("jsonwebtoken");
 
-// Middleware to verify JWT and attach user info to req.user
+// Verify JWT, attach user info to req.user
 function authenticateToken(req, res, next) {
-  const token = req.cookies.jwt; // Ensure your cookie name is 'jwt'
+  const token = req.cookies.jwt;
 
   if (!token) {
     return res.redirect("/account/login");
@@ -10,42 +10,25 @@ function authenticateToken(req, res, next) {
 
   try {
     const user = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = user; // Decoded token payload must have role, account_id, etc.
+    req.user = user;
     next();
   } catch (err) {
-    console.error("JWT error:", err);
+    console.error("JWT verification failed:", err.message);
+    res.clearCookie("jwt");
     return res.redirect("/account/login");
   }
 }
 
-// Middleware to check if user is an admin
+// Only admins allowed
 function requireAdmin(req, res, next) {
   if (req.user && req.user.role && req.user.role.toLowerCase() === "admin") {
-    next();
-  } else {
-    res.status(403).render("errors/403", {
-      title: "403 - Unauthorized",
-      nav: [],
-      errors: [{ msg: "Access denied. Admins only." }],
-    });
+    return next();
   }
+  res.status(403).render("errors/403", {
+    title: "403 - Unauthorized",
+    nav: [],
+    errors: [{ msg: "Access denied. Admins only." }],
+  });
 }
 
-// Middleware to check if user is an admin or employee
-function requireAdminOrEmployee(req, res, next) {
-  if (
-    req.user &&
-    req.user.role &&
-    (req.user.role.toLowerCase() === "admin" || req.user.role.toLowerCase() === "employee")
-  ) {
-    next();
-  } else {
-    res.status(403).render("errors/403", {
-      title: "403 - Unauthorized",
-      nav: [],
-      errors: [{ msg: "Access denied. Admins or Employees only." }],
-    });
-  }
-}
-
-module.exports = { authenticateToken, requireAdmin, requireAdminOrEmployee };
+module.exports = { authenticateToken, requireAdmin };

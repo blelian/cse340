@@ -1,0 +1,58 @@
+<h1>Update Account Information</h1>
+
+<!-- Flash messages -->
+<% if (messages().notice) { %>
+  <ul class="notice">
+    <% messages().notice.forEach(function(msg) { %>
+      <li><%= msg %></li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<!-- Validation Errors -->
+<% if (errors) { %>
+  <ul class="notice">
+    <% errors.forEach(function(error) { %>
+      <li><%= error.msg %></li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<form action="/account/update" method="POST" novalidate>
+  <label for="accountFirstName">First Name:</label>
+  <input
+    type="text"
+    id="accountFirstName"
+    name="account_firstname"
+    required
+    value="<%= account_firstname || '' %>"
+  >
+
+  <label for="accountLastName">Last Name:</label>
+  <input
+    type="text"
+    id="accountLastName"
+    name="account_lastname"
+    required
+    value="<%= account_lastname || '' %>"
+  >
+
+  <label for="accountEmail">Email:</label>
+  <input
+    type="email"
+    id="accountEmail"
+    name="account_email"
+    required
+    value="<%= account_email || '' %>"
+  >
+
+  <label for="accountPassword">New Password (leave blank to keep current):</label>
+  <input
+    type="password"
+    id="accountPassword"
+    name="account_password"
+    placeholder="Enter new password if changing"
+  >
+
+  <button type="submit">Update Account</button>
+</form>

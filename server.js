@@ -7,6 +7,8 @@ const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const flash = require("connect-flash");
 
+const { authenticateToken, requireAdmin } = require("./middleware/auth");
+
 const app = express();
 
 // Middleware
@@ -14,7 +16,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// Session middleware (required for flash messages)
+// Session middleware (for flash messages)
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "your_secret_key_here",
@@ -24,10 +26,9 @@ app.use(
   })
 );
 
-// Flash middleware
 app.use(flash());
 
-// Middleware to expose flash messages and useFormsCSS flag globally
+// Middleware to expose flash messages and user info globally
 app.use((req, res, next) => {
   res.locals.messages = () => {
     const flashes = req.flash();
@@ -40,7 +41,8 @@ app.use((req, res, next) => {
     return html;
   };
 
-  // Default to false if route didn’t explicitly set this flag
+  res.locals.user = req.user || null;
+
   if (typeof res.locals.useFormsCSS === "undefined") {
     res.locals.useFormsCSS = false;
   }
@@ -60,8 +62,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // Controllers
 const baseController = require("./controllers/baseController");
-
-// Routes
 const accountRoutes = require("./routes/accountRoute");
 const inventoryRoutes = require("./routes/inventoryRoute");
 const adminRoutes = require("./routes/admin");
@@ -70,13 +70,15 @@ const adminInventoryRoutes = require("./routes/adminInventory");
 // Home route
 app.get("/", baseController.buildHome);
 
-// Feature routes
+// Public routes
 app.use("/account", accountRoutes);
-app.use("/inventory", inventoryRoutes);
+
+// Protected routes
+app.use("/inventory", authenticateToken, inventoryRoutes);
 
 // Admin routes
-app.use("/admin", adminRoutes);
-app.use("/admin/inventory", adminInventoryRoutes);
+app.use("/admin", authenticateToken, requireAdmin, adminRoutes);
+app.use("/admin/inventory", authenticateToken, requireAdmin, adminInventoryRoutes);
 
 // 404 handler
 app.use((req, res, next) => {

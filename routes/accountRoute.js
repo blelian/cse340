@@ -1,34 +1,21 @@
-  // routes/accountRoute.js
-  const express = require("express");
-  const router = express.Router();
-  const accountController = require("../controllers/accountController");
-  const { registerRules, loginRules, checkValidation } = require("../utilities/account-validation");
-  const { checkJWTToken } = require("../utilities/jwt-auth");
-  const utils = require("../utilities/");
+const express = require("express");
+const router = express.Router();
+const accountController = require("../controllers/accountController");
+const { authenticateToken } = require("../middleware/auth");
 
-  // Middleware to load nav for every account route
-  router.use(async (req, res, next) => {
-    req.nav = await utils.getNav();
-    next();
-  });
+// Public routes - no authentication required
+router.get("/login", accountController.buildLogin);
+router.get("/register", accountController.buildRegister);
+router.post("/register", accountController.registerAccount);
+router.post("/login", accountController.loginAccount);
+router.get("/logout", accountController.logoutAccount);
 
-  // Public routes
-  router.get("/login", accountController.buildLogin);
-  router.post("/login", loginRules(), checkValidation, accountController.loginAccount);
+// Example: If you have profile or other account pages that require login,
+// you can protect them with authenticateToken middleware like this:
 
-  router.get("/register", accountController.buildRegister);
-  router.post("/register", registerRules(), checkValidation, accountController.registerAccount);
+// router.get("/profile", authenticateToken, accountController.buildProfile);
+// router.post("/update-profile", authenticateToken, accountController.updateProfile);
 
-  // Protected route example
-  router.get("/dashboard", checkJWTToken, (req, res) => {
-    res.render("account/dashboard", {
-      title: "Dashboard",
-      nav: req.nav,
-      user: req.user,
-      errors: null,
-    });
-  });
+// Add any other existing account routes here, and protect them as needed
 
-  router.get("/logout", accountController.logoutAccount);
-
-  module.exports = router;
+module.exports = router;
