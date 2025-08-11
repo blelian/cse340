@@ -6,8 +6,10 @@ const cookieParser = require("cookie-parser");
 const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 const flash = require("connect-flash");
+const jwt = require("jsonwebtoken");
 
-const { authenticateToken, requireAdmin } = require("./middleware/auth");
+const { requireAdmin, authenticateToken } = require("./middleware/auth");
+const utils = require("./utilities"); // for getNav()
 
 const app = express();
 
@@ -28,7 +30,25 @@ app.use(
 
 app.use(flash());
 
-// Middleware to expose flash messages and user info globally
+// Middleware to authenticate JWT from cookie and attach user to req
+app.use((req, res, next) => {
+  const token = req.cookies.jwt;
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+    if (err) {
+      req.user = null;
+      res.clearCookie("jwt");
+    } else {
+      req.user = decoded;
+    }
+    next();
+  });
+});
+
+// Middleware to expose flash messages and user info globally to views
 app.use((req, res, next) => {
   res.locals.messages = () => {
     const flashes = req.flash();
@@ -45,6 +65,9 @@ app.use((req, res, next) => {
 
   if (typeof res.locals.useFormsCSS === "undefined") {
     res.locals.useFormsCSS = false;
+  }
+  if (typeof res.locals.bodyClass === "undefined") {
+    res.locals.bodyClass = "";
   }
 
   next();
@@ -66,6 +89,7 @@ const accountRoutes = require("./routes/accountRoute");
 const inventoryRoutes = require("./routes/inventoryRoute");
 const adminRoutes = require("./routes/admin");
 const adminInventoryRoutes = require("./routes/adminInventory");
+const errorRoutes = require("./routes/errorRoute"); // <-- Added
 
 // Home route
 app.get("/", baseController.buildHome);
@@ -80,24 +104,33 @@ app.use("/inventory", authenticateToken, inventoryRoutes);
 app.use("/admin", authenticateToken, requireAdmin, adminRoutes);
 app.use("/admin/inventory", authenticateToken, requireAdmin, adminInventoryRoutes);
 
+// Error testing route
+app.use("/error", errorRoutes);
+
 // 404 handler
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+  const nav = await utils.getNav().catch(() => []);
   res.status(404).render("errors/404", {
     title: "404 - Not Found",
     message: "Page not found",
-    nav: [],
+    nav,
     errors: null,
+    useFormsCSS: false,
+    bodyClass: "error-404",
   });
 });
 
 // Global error handler
-app.use((err, req, res, next) => {
+app.use(async (err, req, res, next) => {
   console.error("❌ Global Error:", err);
-  res.status(500).render("errors/500", {
+  const nav = await utils.getNav().catch(() => []);
+  res.status(err.status || 500).render("errors/500", {
     title: "500 - Server Error",
-    message: err.message,
-    nav: [],
+    message: err.message || "Internal Server Error",
+    nav,
     errors: null,
+    useFormsCSS: false,
+    bodyClass: "error-500",
   });
 });
 

@@ -1,15 +1,15 @@
-:root {
+:root { 
   --color-form-bg: #ffffff;
   --color-shadow: rgba(0, 0, 0, 0.1);
   --border-radius: 8px;
   --padding-large: 2rem;
-  --form-max-width: 1100px; /* increased from 600px for wider container */
+  --form-max-width: 1100px; /* wider container */
   --input-border: #ccc;
   --primary-color: #003366;
   --primary-hover: #0055aa;
 }
 
-/* Form wrapper styles - scoped so it doesn't affect other pages like 'details' */
+/* Form wrapper styles - scoped to not affect other pages */
 .form-wrapper {
   max-width: var(--form-max-width);
   margin: 2rem auto;
@@ -22,7 +22,7 @@
 
 /* Increased width for login form */
 .login-form-wrapper {
-  max-width: 700px;  /* wider than default */
+  max-width: 700px; /* wider than default */
 }
 
 /* Container for form elements */
@@ -30,6 +30,8 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 /* Labels */
@@ -48,6 +50,7 @@
   font-size: 1rem;
   font-family: inherit;
   box-sizing: border-box;
+  width: 100%;
 }
 
 /* Textarea specific */
@@ -56,8 +59,9 @@
   resize: vertical;
 }
 
-/* Submit button */
-.form-container button {
+/* Submit button and other buttons */
+.form-container button,
+.button {
   background-color: var(--primary-color);
   color: white;
   border: none;
@@ -68,29 +72,61 @@
   font-size: 1rem;
   transition: background-color 0.3s ease;
   align-self: flex-start;
+  text-align: center;
+  display: inline-block;
+  text-decoration: none;
 }
 
-.form-container button:hover {
+.form-container button:hover,
+.button:hover {
   background-color: var(--primary-hover);
 }
 
-h1 {
+/* Headings */
+h1, .form-title {
   text-align: center;
   color: var(--primary-color);
+  margin-bottom: 0.5rem;
 }
 
+.form-subtitle {
+  text-align: center;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+/* List styling for account details and similar */
+.form-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 2rem 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.form-list li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #ddd;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.form-list li:last-child {
+  border-bottom: none;
+}
+
+/* Admin links list */
 .admin-links {
   list-style: none;
   padding: 0;
   margin: 1rem 0;
-  /* keep vertical stacking, so no flex or grid */
 }
 
 .admin-links li {
-  margin-bottom: 1rem; /* space between buttons vertically */
+  margin-bottom: 1rem;
 }
 
-/* Optional: remove margin from last item */
 .admin-links li:last-child {
   margin-bottom: 0;
 }
@@ -104,7 +140,7 @@ h1 {
   text-decoration: none;
   font-weight: bold;
   transition: background-color 0.3s ease;
-  width: 30%; /* optional, full width buttons */
+  width: 30%;
   box-sizing: border-box;
 }
 
@@ -126,6 +162,7 @@ h1 {
   text-decoration: underline;
 }
 
+/* Dropdown styling */
 .styled-dropdown {
   padding: 8px 12px;
   font-size: 1rem;
@@ -143,7 +180,6 @@ h1 {
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
-/* Style the classification dropdown */
 #classification_id {
   display: block;
   width: 300px;
@@ -163,7 +199,7 @@ h1 {
   outline: none;
 }
 
-/* Style the inventory table */
+/* Inventory table styling */
 #inventoryDisplay {
   width: 100%;
   border-collapse: collapse;
@@ -195,7 +231,7 @@ h1 {
   cursor: pointer;
 }
 
-/* Responsive - smaller screens */
+/* Responsive adjustments */
 @media (max-width: 600px) {
   #classification_id {
     width: 100%;
@@ -203,9 +239,12 @@ h1 {
   #inventoryDisplay {
     font-size: 0.9rem;
   }
+  table {
+    font-size: 0.9rem;
+  }
 }
 
-/* Add the following CSS to style your admin dashboard */
+/* Admin dashboard container */
 .admin-dashboard {
   max-width: 1200px;
   margin: 2rem auto;
@@ -227,6 +266,7 @@ h1 {
   text-align: center;
 }
 
+/* Navigation styles */
 nav ul {
   display: flex;
   flex-direction: column;
@@ -254,15 +294,17 @@ nav ul li a:hover {
   background-color: #0055aa;
 }
 
-/* Center and constrain width of your inventory table */
+/* Table styling */
 .styled-table {
   margin-left: auto;
   margin-right: auto;
-  max-width: 100%; /* fill the form-wrapper */
+  max-width: 100%;
   width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
 }
 
-/* Employees List Table Styling */
 table {
   width: 100%;
   max-width: 1100px;
@@ -295,7 +337,6 @@ tbody tr:hover {
   cursor: pointer;
 }
 
-/* Style action links and buttons */
 tbody td a {
   color: #003366;
   text-decoration: none;
@@ -325,43 +366,4 @@ tbody td button {
 
 tbody td button:hover {
   background-color: #e74c3c;
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-  table {
-    font-size: 0.9rem;
-  }
-}
-
-/* ================== */
-/* Center and constrain the add inventory form */
-/* Narrower form width and horizontally centered */
-.form-container {
-  max-width: 600px; /* narrower form width */
-  margin: 0 auto; /* center horizontally */
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-/* Inputs and selects fill container width */
-.form-container input,
-.form-container select,
-.form-container textarea {
-  max-width: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid var(--input-border);
-  font-size: 1rem;
-  font-family: inherit;
-}
-
-/* Center the submit button and limit its width */
-.form-container button {
-  max-width: 200px;
-  width: 100%;
-  align-self: center;
 }

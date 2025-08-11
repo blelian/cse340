@@ -23,6 +23,22 @@ async function buildRegister(req, res) {
   });
 }
 
+// Show account management page after login
+async function buildAccount(req, res) {
+  const nav = await utils.getNav();
+  // Extract info from JWT token decoded user in req.user if you have middleware
+  // OR you can decode the JWT here if needed
+  const accountData = req.user || {}; // assuming middleware attaches user to req.user
+
+  res.render("account/account", {
+    title: "Account Management",
+    nav,
+    accountData,
+    message: "You’re logged in!",
+    errors: null,
+  });
+}
+
 // Handle registration POST
 async function registerAccount(req, res, next) {
   try {
@@ -32,14 +48,13 @@ async function registerAccount(req, res, next) {
     await pool.query(
       `INSERT INTO account (account_firstname, account_lastname, account_email, account_password, account_type)
        VALUES ($1, $2, $3, $4, $5)`,
-      [first_name, last_name, email, hashedPassword, "client"] // use "client" to match your enum
+      [first_name, last_name, email, hashedPassword, "client"] // match enum value
     );
 
     res.redirect("/account/login");
   } catch (error) {
     const nav = await utils.getNav();
 
-    // If error has validation errors, re-render with user input and errors
     if (error.errors) {
       return res.status(400).render("account/register", {
         title: "Register",
@@ -50,8 +65,6 @@ async function registerAccount(req, res, next) {
         email: req.body.email,
       });
     }
-
-    // For other errors, just pass along
     next(error);
   }
 }
@@ -88,7 +101,10 @@ async function loginAccount(req, res, next) {
     const token = jwt.sign(
       {
         account_id: account.account_id,
-        email: account.account_email,
+        account_firstname: account.account_firstname,
+        account_lastname: account.account_lastname,
+        account_email: account.account_email,
+        account_type: account.account_type,
         role: account.account_type,
       },
       process.env.JWT_SECRET,
@@ -105,7 +121,7 @@ async function loginAccount(req, res, next) {
     if (account.account_type && account.account_type.toLowerCase() === "admin") {
       return res.redirect("/admin");
     } else {
-      return res.redirect("/");
+      return res.redirect("/account");  // redirect to account page after login
     }
   } catch (error) {
     next(error);
@@ -121,6 +137,7 @@ function logoutAccount(req, res) {
 module.exports = {
   buildLogin,
   buildRegister,
+  buildAccount,      // <--- add new function here
   registerAccount,
   loginAccount,
   logoutAccount,

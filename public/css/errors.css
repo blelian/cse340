@@ -1,0 +1,107 @@
+:root {
+  --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --background-color-404: #f8f9fa;
+  --background-color-500: #fff3f3;
+  --text-color-404: #333;
+  --text-color-500: #5a1e1e;
+  --container-bg: #ffffff;
+  --container-shadow-404: rgba(0, 0, 0, 0.1);
+  --container-shadow-500: rgba(90, 30, 30, 0.15);
+  --error-color-404: #dc3545; /* Bootstrap danger red */
+  --error-color-500: #b02a37; /* darker red */
+  --link-color-404: #0d6efd;
+  --link-color-500: #d6336c;
+  --link-hover-color-404: #0a58ca;
+  --link-hover-color-500: #a02550;
+  --border-radius: 12px;
+  --spacing: 1rem;
+  --font-size-large: 3rem;
+  --font-size-medium: 1.25rem;
+}
+
+/* Default styles for error containers */
+body.error-404 {
+  font-family: var(--font-family);
+  background-color: var(--background-color-404);
+  color: var(--text-color-404);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: var(--spacing);
+  text-align: center;
+}
+
+body.error-500 {
+  font-family: var(--font-family);
+  background-color: var(--background-color-500);
+  color: var(--text-color-500);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  padding: var(--spacing);
+  text-align: center;
+}
+
+body.error-404 .container {
+  max-width: 500px;
+  background: var(--container-bg);
+  padding: calc(var(--spacing) * 2);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 15px var(--container-shadow-404);
+}
+
+body.error-500 .container {
+  max-width: 500px;
+  background: var(--container-bg);
+  padding: calc(var(--spacing) * 2);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 15px var(--container-shadow-500);
+}
+
+body.error-404 h1 {
+  font-size: var(--font-size-large);
+  margin-bottom: 0.5rem;
+  color: var(--error-color-404);
+}
+
+body.error-500 h1 {
+  font-size: var(--font-size-large);
+  margin-bottom: 0.5rem;
+  color: var(--error-color-500);
+}
+
+body.error-404 p,
+body.error-500 p {
+  font-size: var(--font-size-medium);
+  margin-bottom: calc(var(--spacing) * 1.5);
+}
+
+body.error-404 a {
+  color: var(--link-color-404);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+
+body.error-500 a {
+  color: var(--link-color-500);
+  text-decoration: none;
+  font-weight: 600;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s;
+}
+
+body.error-404 a:hover,
+body.error-404 a:focus {
+  border-color: var(--link-hover-color-404);
+}
+
+body.error-500 a:hover,
+body.error-500 a:focus {
+  border-color: var(--link-hover-color-500);
+}
