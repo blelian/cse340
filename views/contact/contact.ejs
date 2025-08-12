@@ -1,0 +1,22 @@
+<section class="contact-form-container">
+  <% if (errors.length > 0) { %>
+    <ul style="color: red;">
+      <% errors.forEach(error => { %>
+        <li><%= error %></li>
+      <% }) %>
+    </ul>
+  <% } %>
+
+  <form action="/contact" method="POST" novalidate>
+    <label for="name">Name:</label>
+    <input type="text" id="name" name="name" value="<%= formData.name || '' %>" required />
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" value="<%= formData.email || '' %>" required />
+
+    <label for="message">Message:</label>
+    <textarea id="message" name="message" rows="6" required><%= formData.message || '' %></textarea>
+
+    <button type="submit" class="btn-primary">Send</button>
+  </form>
+</section>

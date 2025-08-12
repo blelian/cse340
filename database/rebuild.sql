@@ -2,6 +2,7 @@
 DROP TABLE IF EXISTS inventory CASCADE;
 DROP TABLE IF EXISTS classification CASCADE;
 DROP TABLE IF EXISTS account CASCADE;
+DROP TABLE IF EXISTS messages CASCADE;  -- Drop messages table if exists
 DROP TYPE IF EXISTS account_type CASCADE;
 
 -- Create ENUM (all lowercase to match code roles)
@@ -34,6 +35,15 @@ CREATE TABLE inventory (
   inv_miles INTEGER NOT NULL,
   inv_color VARCHAR(20) NOT NULL,
   classification_id INTEGER REFERENCES classification(classification_id)
+);
+
+-- NEW TABLE for Contact Us messages
+CREATE TABLE messages (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  message TEXT NOT NULL,
+  date_sent TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Insert Classifications

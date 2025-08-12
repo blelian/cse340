@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('./partials/head') %> <!-- Head section with meta tags, etc. -->
+  <%- include('./partials/head') %> <!-- Head section with meta tags, etc. -->
 
-<body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+  <body class="<%= typeof bodyClass !== 'undefined' ? bodyClass : '' %>">
+    <div id="wrapper">
+      <%- include('./partials/header', { useFormsCSS: useFormsCSS }) %>
 
-  <div id="wrapper">
-    <%- include('./partials/header', { useFormsCSS: useFormsCSS }) %>
-    <main>
-      <%- body %>
-      <!-- debug output -->
-    </main>
-    <%- include('./partials/footer') %>
-  </div>
-  <script src="/js/nav-toggle.js"></script>
-</body>
+      <main>
+        <%- body %>
+        <!-- debug output -->
+      </main>
+
+      <%- include('./partials/footer') %>
+    </div>
+
+    <script src="/js/nav-toggle.js"></script>
+  </body>
 </html>

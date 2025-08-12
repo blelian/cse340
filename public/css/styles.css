@@ -303,3 +303,64 @@ footer .error-link:focus {
   max-width: 90%;
   width: 100%;
 }
+.contact-us-button {
+  text-align: center; /* center the inline-block button inside */
+  margin: 20px 0; /* optional spacing */
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: 12px 24px;
+  background-color: #007bff;
+  color: white;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+/* Container to center the form */
+.contact-form-container {
+  display: flex;
+  justify-content: center; /* centers horizontally */
+  padding: 2rem;
+}
+
+/* The form itself */
+.contact-form-container form {
+  width: 100%;
+  max-width: 500px; /* controls form width */
+  background-color: #f9f9f9;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+/* Labels */
+.contact-form-container label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+}
+
+/* Inputs and textarea */
+.contact-form-container input,
+.contact-form-container textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+/* Success message container */
+.contact-success-container {
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.25rem;
+}

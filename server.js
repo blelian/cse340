@@ -83,19 +83,23 @@ app.use(expressLayouts);
 // Static files
 app.use(express.static(path.join(__dirname, "public")));
 
-// Controllers
+// Controllers & Routes
 const baseController = require("./controllers/baseController");
 const accountRoutes = require("./routes/accountRoute");
 const inventoryRoutes = require("./routes/inventoryRoute");
 const adminRoutes = require("./routes/admin");
 const adminInventoryRoutes = require("./routes/adminInventory");
-const errorRoutes = require("./routes/errorRoute"); // <-- Added
+const errorRoutes = require("./routes/errorRoute");
+
+// Contact Routes
+const contactRoutes = require("./routes/contactRoutes");
 
 // Home route
 app.get("/", baseController.buildHome);
 
 // Public routes
 app.use("/account", accountRoutes);
+app.use("/contact", contactRoutes);  // Mount contact routes at /contact
 
 // Protected routes
 app.use("/inventory", authenticateToken, inventoryRoutes);
@@ -114,7 +118,7 @@ app.use(async (req, res, next) => {
     message: "Page not found",
     useFormsCSS: false,
     bodyClass: "error-404",
-    layout: false,  // Disable layout for error pages
+    layout: false,
   });
 });
 
@@ -123,10 +127,10 @@ app.use(async (err, req, res, next) => {
   console.error("❌ Global Error:", err);
   res.status(err.status || 500).render("errors/500", {
     title: "500 - Server Error",
-    message: err.message || "Internal Server Error",
+    message: "Oops! Something went wrong on our end. Please try again later.",
     useFormsCSS: false,
     bodyClass: "error-500",
-    layout: false,  // Disable layout for error pages
+    layout: false,
   });
 });
 
