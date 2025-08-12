@@ -114,7 +114,7 @@ app.use(async (req, res, next) => {
     message: "Page not found",
     useFormsCSS: false,
     bodyClass: "error-404",
-    layout: false,  // Disable layout for error pages
+    layout: false, // Disable layout for error pages
   });
 });
 
@@ -123,10 +123,10 @@ app.use(async (err, req, res, next) => {
   console.error("❌ Global Error:", err);
   res.status(err.status || 500).render("errors/500", {
     title: "500 - Server Error",
-    message: err.message || "Internal Server Error",
+    message: "Sorry, something went wrong on our end. Please try again later.", // Generic message
     useFormsCSS: false,
     bodyClass: "error-500",
-    layout: false,  // Disable layout for error pages
+    layout: false, // Disable layout for error pages
   });
 });
 
