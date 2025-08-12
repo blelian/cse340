@@ -1,3 +1,144 @@
+const pool = require("../database");
+const utilities = require("../utilities");
+
+async function listInventory(req, res, next) {
+  try {
+    const nav = await utilities.getNav();
+
+    const classificationResult = await pool.query(
+      "SELECT * FROM classification ORDER BY classification_name"
+    );
+    const classifications = classificationResult.rows;
+
+    const selectedClassificationId = req.query.classification_id
+      ? parseInt(req.query.classification_id)
+      : null;
+
+    let inventoryResult;
+    if (selectedClassificationId) {
+      inventoryResult = await pool.query(
+        `SELECT inventory.*, classification.classification_name 
+         FROM inventory 
+         JOIN classification ON inventory.classification_id = classification.classification_id 
+         WHERE inventory.classification_id = $1
+         ORDER BY inventory.inv_make`,
+        [selectedClassificationId]
+      );
+    } else {
+      inventoryResult = await pool.query(
+        `SELECT inventory.*, classification.classification_name 
+         FROM inventory 
+         JOIN classification ON inventory.classification_id = classification.classification_id
+         ORDER BY inventory.inv_make`
+      );
+    }
+
+    res.render("inventory/management", {
+      title: "Inventory Management",
+      nav,
+      classifications,
+      selectedClassificationId,
+      inventory: inventoryResult.rows,
+      user: req.user,
+      useFormsCSS: false,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function showAddForm(req, res, next) {
+  try {
+    const nav = await utilities.getNav();
+    const classificationResult = await pool.query(
+      "SELECT * FROM classification ORDER BY classification_name"
+    );
+    const classifications = classificationResult.rows;
+
+    res.render("admin/add-inventory", {
+      title: "Add New Inventory Item",
+      nav,
+      classifications,
+      user: req.user,
+      useFormsCSS: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function handleAdd(req, res, next) {
+  try {
+    const {
+      classification_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color,
+    } = req.body;
+
+    await pool.query(
+      `INSERT INTO inventory
+       (classification_id, inv_make, inv_model, inv_year, inv_description, inv_image, inv_thumbnail, inv_price, inv_miles, inv_color)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`,
+      [
+        classification_id,
+        inv_make,
+        inv_model,
+        inv_year,
+        inv_description,
+        inv_image,
+        inv_thumbnail,
+        inv_price,
+        inv_miles,
+        inv_color,
+      ]
+    );
+
+    res.redirect("/admin/inventory");
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function showEditForm(req, res, next) {
+  try {
+    const { id } = req.params;
+    const nav = await utilities.getNav();
+
+    const classificationResult = await pool.query(
+      "SELECT * FROM classification ORDER BY classification_name"
+    );
+    const classifications = classificationResult.rows;
+
+    const invResult = await pool.query(
+      "SELECT * FROM inventory WHERE inv_id = $1",
+      [id]
+    );
+    if (invResult.rowCount === 0) {
+      return res.status(404).send("Inventory item not found");
+    }
+    const inventoryItem = invResult.rows[0];
+
+    // ✅ Changed to match your actual file path and variable names in edit.ejs
+    res.render("admin/inventory/edit", {
+      title: `Edit Inventory Item: ${inventoryItem.inv_make} ${inventoryItem.inv_model}`,
+      nav,
+      classifications,
+      inventoryItem,
+      user: req.user,
+      useFormsCSS: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 async function handleEdit(req, res, next) {
   try {
     const { id } = req.params;
@@ -13,48 +154,6 @@ async function handleEdit(req, res, next) {
       inv_miles,
       inv_color,
     } = req.body;
-
-    const errors = [];
-
-    if (!classification_id) errors.push("Classification is required.");
-    if (!inv_make || inv_make.trim() === "") errors.push("Make is required.");
-    if (!inv_model || inv_model.trim() === "") errors.push("Model is required.");
-    if (!inv_year || isNaN(Number(inv_year))) errors.push("Valid Year is required.");
-    if (!inv_description || inv_description.trim() === "") errors.push("Description is required.");
-    if (!inv_price || isNaN(Number(inv_price))) errors.push("Valid Price is required.");
-    if (!inv_miles || isNaN(Number(inv_miles))) errors.push("Valid Miles is required.");
-    if (!inv_color || inv_color.trim() === "") errors.push("Color is required.");
-
-    if (errors.length > 0) {
-      const nav = await utilities.getNav();
-
-      const classificationResult = await pool.query(
-        "SELECT * FROM classification ORDER BY classification_name"
-      );
-      const classifications = classificationResult.rows;
-
-      return res.status(400).render("admin/inventory/edit", {
-        title: `Edit Inventory Item: ${inv_make} ${inv_model}`,
-        nav,
-        classifications,
-        inventoryItem: {
-          inv_id: id,
-          classification_id,
-          inv_make,
-          inv_model,
-          inv_year,
-          inv_description,
-          inv_image,
-          inv_thumbnail,
-          inv_price,
-          inv_miles,
-          inv_color,
-        },
-        errors,
-        user: req.user,
-        useFormsCSS: true,
-      });
-    }
 
     await pool.query(
       `UPDATE inventory SET
@@ -89,3 +188,58 @@ async function handleEdit(req, res, next) {
     next(error);
   }
 }
+
+async function handleDelete(req, res, next) {
+  try {
+    const { id } = req.params;
+    await pool.query("DELETE FROM inventory WHERE inv_id = $1", [id]);
+    res.redirect("/admin/inventory");
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function showAddClassificationForm(req, res, next) {
+  try {
+    const nav = await utilities.getNav();
+    res.render("admin/inventory/add-classification", {
+      title: "Add Classification",
+      nav,
+      user: req.user,
+      useFormsCSS: true,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function handleAddClassification(req, res, next) {
+  try {
+    const { classification_name } = req.body;
+
+    if (!classification_name) {
+      req.flash("error", "Classification name is required.");
+      return res.redirect("/admin/inventory/add-classification");
+    }
+
+    const sql =
+      "INSERT INTO classification (classification_name) VALUES ($1)";
+    await pool.query(sql, [classification_name]);
+
+    req.flash("success", "Classification added successfully.");
+    res.redirect("/admin/inventory");
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = {
+  listInventory,
+  showAddForm,
+  handleAdd,
+  showEditForm,
+  handleEdit,
+  handleDelete,
+  showAddClassificationForm,
+  handleAddClassification,
+};

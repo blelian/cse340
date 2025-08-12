@@ -107,30 +107,26 @@ app.use("/admin/inventory", authenticateToken, requireAdmin, adminInventoryRoute
 // Error testing route
 app.use("/error", errorRoutes);
 
-// 404 handler
+// 404 handler — disable layout so error page is standalone
 app.use(async (req, res, next) => {
-  const nav = await utils.getNav().catch(() => []);
   res.status(404).render("errors/404", {
     title: "404 - Not Found",
     message: "Page not found",
-    nav,
-    errors: null,
     useFormsCSS: false,
     bodyClass: "error-404",
+    layout: false,  // Disable layout for error pages
   });
 });
 
-// Global error handler
+// Global error handler — disable layout so error page is standalone
 app.use(async (err, req, res, next) => {
   console.error("❌ Global Error:", err);
-  const nav = await utils.getNav().catch(() => []);
   res.status(err.status || 500).render("errors/500", {
     title: "500 - Server Error",
     message: err.message || "Internal Server Error",
-    nav,
-    errors: null,
     useFormsCSS: false,
     bodyClass: "error-500",
+    layout: false,  // Disable layout for error pages
   });
 });
 
